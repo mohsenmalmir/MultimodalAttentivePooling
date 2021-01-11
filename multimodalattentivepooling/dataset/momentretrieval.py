@@ -46,6 +46,8 @@ class MomentRetrieval(Dataset):
                 "ts_frame": m["ts_frame"],
                 "subs":[s["text"] for s in m["subtitles"]],
                 "query":m["desc"],
+                "frame_label":m["frame_label"],
+                "frame_label_pos_weights":m["frame_pos_weights"],
                 }
         # this is to enable a cascade of transforms that are modular, e.g. resize, augment, word2vec, etc.
         for t in self.transform:
