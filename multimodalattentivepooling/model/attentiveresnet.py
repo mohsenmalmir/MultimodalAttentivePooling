@@ -92,7 +92,7 @@ class BasicBlock(nn.Module):
             nn.BatchNorm3d(planes),
             nn.ReLU(inplace=True)
         )
-        self.we1 = WordEncoder(d_model=dw, d_out=planes)
+        self.we1 = WordEncoder(d_input=dw, d_out=planes)
         self.pool1 = CorpusAttentivePool(kernel_size=(1,3,3), padding=(0,1,1))
         self.conv2 = nn.Sequential(
             conv_builder(planes, planes, midplanes),
@@ -283,7 +283,7 @@ class VideoResNet(nn.Module):
 
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
-            layers.append(block(self.inplanes, planes, conv_builder))
+            layers.append(block(self.inplanes, planes, conv_builder, dw=dw))
 
         return nn.Sequential(*layers)
 
