@@ -312,7 +312,7 @@ def _video_resnet(arch, pretrained=False, progress=True, **kwargs):
     return model
 
 
-def r3d_18(pretrained=False, progress=True, **kwargs):
+def r3d_18(pretrained=False, progress=True, dw=300, **kwargs):
     """Construct 18 layer Resnet3D model as in
     https://arxiv.org/abs/1711.11248
 
@@ -330,7 +330,7 @@ def r3d_18(pretrained=False, progress=True, **kwargs):
                          conv_makers=[Conv3DSimple] * 4,
                          layers=[2, 2, 2, 2],
                          stem=BasicStem,
-                         dw=128,
+                         dw=dw,
                          **kwargs)
 
 
