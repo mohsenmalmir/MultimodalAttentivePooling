@@ -13,7 +13,7 @@ class WordEncoder(Module):
     dim_feedforward: int
     ropout: float
     activation: str
-    def __init__(self, d_model=128, nhead=8, num_layers=4, dim_feedforward=1024, dropout=0.1, activation="relu", d_out=128):
+    def __init__(self, d_model=128, nhead=4, num_layers=4, dim_feedforward=1024, dropout=0.1, activation="relu", d_out=128):
         super(WordEncoder, self).__init__()
         encoder_layer = TransformerEncoderLayer(d_model, nhead, dim_feedforward, dropout, activation)
         encoder_norm = LayerNorm(d_model)
