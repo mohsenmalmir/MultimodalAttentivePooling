@@ -34,6 +34,8 @@ class CorpusAttentivePool(Module):
             elif op=="mean":
                 return torch.mean(x, dim=1, keepdim=True)
         self.agg = agg_f
+        k1 = torch.ones(1, 1, *self.kernel_size).float() # required shape is outC,InC,T,H,W
+        self.k1 = torch.nn.Parameter(k1, requires_grad=False)
 
 
     def forward(self, vw, w):
@@ -54,8 +56,7 @@ class CorpusAttentivePool(Module):
         sdotp = torch.div(dotp, math.sqrt(C)) # scaled dot product, N1THW
         emap = torch.exp(sdotp) # e(x), N1THW
         # convolve with kernel of 1s to calculate the sum, i.e. denominator of the softmax
-        k1 = torch.ones(1, 1, *self.kernel_size).float() # required shape is outC,InC,T,H,W
-        denom = F.conv3d(emap, k1, bias=None, stride=self.stride, padding=self.padding, dilation=self.dilation)# same THW as input map
+        denom = F.conv3d(emap, self.k1, bias=None, stride=self.stride, padding=self.padding, dilation=self.dilation)# same THW as input map
         # multiply input by emap, to get the scaled visual words
         scaledvw = torch.mul(vw, emap) # NCTHW
         # convolve with k1 to get an average of neighboring visual words
@@ -63,7 +64,7 @@ class CorpusAttentivePool(Module):
         results = []
         for ii in range(N):
             # C 1 T H W -> C 1 T H W
-            avg = F.conv3d(scaledvw[ii], k1, bias=None, stride=self.stride, padding=self.padding, dilation=self.dilation)# same THW as input map
+            avg = F.conv3d(scaledvw[ii], self.k1, bias=None, stride=self.stride, padding=self.padding, dilation=self.dilation)# same THW as input map
             results.append(avg.squeeze(1).unsqueeze(0)) # C1THW -> 1CTHW
         avg = torch.cat(results,dim=0) # NCTHW
         # finally, divide by denom
@@ -72,3 +73,7 @@ class CorpusAttentivePool(Module):
     def extra_repr(self):
         return f'kernel_size={self.kernel_size}, stride={self.stride}, padding={self.padding},' \
                f'dilation={self.dilation},op="{self.op}"'
+    # def to(self, device):
+    #     self.k1.to(device)
+    #     super(CorpusAttentivePool, self).to(device)
+    #     return self
