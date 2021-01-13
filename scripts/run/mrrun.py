@@ -11,7 +11,7 @@ import sys
 sys.path.append('/content/MultimodalAttentivePooling')
 from multimodalattentivepooling.dataset.momentretrieval import MomentRetrieval
 from multimodalattentivepooling.model.attentiveresnet import r3d_18
-
+from torch.utils.tensorboard import SummaryWriter
 
 # using global word2vec model
 glove_vectors = gensim.downloader.load('glove-wiki-gigaword-300')
@@ -81,9 +81,12 @@ net = net.to(device)
 
 print("entering the training loop...")
 n_epochs = 100
+writer = SummaryWriter()
+cntr = 0
 for epoch in range(n_epochs):
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
+        cntr += 1
         # prep input
         imgs, Q, L, W = data["image"], data["query_encoding"], data["frame_label"], data["frame_label_pos_weights"]
         imgs, Q, W = list(map(lambda x: x.float(), [imgs, Q, W]))
@@ -99,9 +102,10 @@ for epoch in range(n_epochs):
         optimizer.step()
         # print statistics
         running_loss += loss.item()
+        writer.add_scalar("Loss/train", loss, cntr)
         if i % 20 == 19:    # print every 2000 mini-batches
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 20))
+            print('[%d, %5d] loss:%.3f running loss: %.3f' %
+                  (epoch + 1,  cntr, loss.item(), running_loss / 20))
             running_loss = 0.0
 
         if i%1000==999:
