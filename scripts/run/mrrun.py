@@ -1,23 +1,113 @@
-import argparse
+import torch
+import torch.nn.functional as F
+import torch.optim as optim
+from torch.utils.data import DataLoader
 from pathlib import Path
-from multimodalattentivepooling.dataset.momentretrieval import  MomentRetrieval
-from multimodalattentivepooling.model.attentivepooling import CorpusAttentivePool
-
-def create_parse():
-    parser = argparse.ArgumentParser(description='Running moment retrieval training loop.')
-    parser.add_argument('--train-json', type=Path, required=True, help='json file containing training moments')
-    parser.add_argument('--val-json', type=Path, required=True, help='json file containing validation moments')
-    parser.add_argument('--img-dir', type=Path, required=True, help='path containing images')
-    parser.add_argument('--ds-transform', nargs="+", type=str, required=True, help='preprocessing transformations applied to data')
-
-    return parser
+import numpy as np
+from skimage import transform
+import gensim.downloader
+from gensim.parsing.preprocessing import remove_stopwords, preprocess_string
+import sys
+sys.path.append('/content/MultimodalAttentivePooling')
+from multimodalattentivepooling.dataset.momentretrieval import MomentRetrieval
+from multimodalattentivepooling.model.attentiveresnet import r3d_18
 
 
+# using global word2vec model
+glove_vectors = gensim.downloader.load('glove-wiki-gigaword-300')
 
-def run(config):
-    pass
+### transformation functions:
+def word2vec(data):
+    """
+    given a sample data from dataset object, this function will transform the
+    query words to features using word2vec
+    """
+    q = data["query"]
+    # remove stop words
+    q = remove_stopwords(q)
+    # prepare string
+    q = preprocess_string(q)
+    # word2vec
 
-if __name__=="__main__":
-    parser = create_parse()
-    args = parser.parse_args()
-    run(config=args.config)
+    enc = [glove_vectors[w].reshape([1,-1]) if w in glove_vectors else np.zeros([1,300]) for w in q]
+    data["query_encoding"] = np.concatenate(enc,axis=0)
+    return data
+
+def imresize(data):
+    """
+    resize all images in the clip, the concatenate them into one tensor
+    """
+    imgs = data["image"]
+    h, w = imgs[0].shape[:2]
+    output_size = 101
+    if h < w:
+        new_h, new_w = output_size * h / w, output_size
+    else:
+        new_h, new_w = output_size, output_size * w / h
+
+    new_h, new_w = int(new_h), int(new_w)
+
+    imgs = list(map(lambda x: np.transpose(transform.resize(x, (new_h, new_w)),[2,0,1]), imgs))
+    imgs = np.concatenate([img[:,np.newaxis,...] for img in imgs],axis=1)
+    data["image"] = imgs
+    return data
+
+def labelprep(data):
+    data["frame_label"] = np.asarray(data["frame_label"])
+    data["frame_label_pos_weights"] = np.asarray(data["frame_label_pos_weights"])
+    return data
+
+# data loader
+print("creating the dataloader...")
+tds = MomentRetrieval(Path("tvr_train.json"),Path("./tvqa/"),transform=[word2vec,imresize,labelprep])
+trainloader = DataLoader(tds, batch_size=1, shuffle=True, num_workers=0)
+
+for ds in trainloader:
+    print(ds["image"].shape)
+    print(ds["frame_label"].shape)
+    print(ds["frame_label_pos_weights"].shape)
+    break
+
+# creating the network
+print("creating the network...")
+net = r3d_18(dw=300)
+
+print("creating the optimizer...")
+optimizer = optim.Adam(net.parameters())
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("device in use:",device)
+net = net.to(device)
+
+print("entering the training loop...")
+n_epochs = 100
+for epoch in range(n_epochs):
+    running_loss = 0.0
+    for i, data in enumerate(trainloader, 0):
+        # prep input
+        imgs, Q, L, W = data["image"], data["query_encoding"], data["frame_label"], data["frame_label_pos_weights"]
+        imgs, Q, W = list(map(lambda x: x.float(), [imgs, Q, W]))
+        imgs, L, W = imgs[:,:,::4,:,:], L[:,::4], W[:,::4]
+        L = L.float()
+        imgs, Q, L, W = list(map(lambda x: x.to(device), [imgs, Q, L, W]))
+        # zero the parameter gradients
+        optimizer.zero_grad()
+        # forward + backward + optimize
+        outputs = net(imgs, Q)
+        loss = F.binary_cross_entropy_with_logits(outputs, L, pos_weight=W)
+        loss.backward()
+        optimizer.step()
+        # print statistics
+        running_loss += loss.item()
+        if i % 20 == 19:    # print every 2000 mini-batches
+            print('[%d, %5d] loss: %.3f' %
+                  (epoch + 1, i + 1, running_loss / 20))
+            running_loss = 0.0
+
+        if i%1000==999:
+            torch.save({
+                'epoch': EPOCH,
+                'model_state_dict': net.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': LOSS,
+            }, "./model_checkpt_{0}".format(i))
