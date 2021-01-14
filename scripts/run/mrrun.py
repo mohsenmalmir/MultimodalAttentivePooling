@@ -60,7 +60,7 @@ def labelprep(data):
 # data loader
 print("creating the dataloader...")
 tds = MomentRetrieval(Path("/home/mmalmir/tvr_train.json"),Path("/home/mmalmir/frames_hq/"),transform=[word2vec,imresize,labelprep])
-trainloader = DataLoader(tds, batch_size=1, shuffle=True, num_workers=4)
+trainloader = DataLoader(tds, batch_size=1, shuffle=True, num_workers=6)
 
 for ds in trainloader:
     print(ds["image"].shape)

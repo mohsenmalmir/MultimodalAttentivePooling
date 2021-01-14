@@ -56,7 +56,7 @@ class CorpusAttentivePool(Module):
         sdotp = torch.div(dotp, math.sqrt(C)) # scaled dot product, N1THW
         emap = torch.exp(sdotp) # e(x), N1THW
         # convolve with kernel of 1s to calculate the sum, i.e. denominator of the softmax
-        denom = F.conv3d(emap, self.k1, bias=None, stride=self.stride, padding=self.padding, dilation=self.dilation)# same THW as input map
+        denom = 0.01 + F.conv3d(emap, self.k1, bias=None, stride=self.stride, padding=self.padding, dilation=self.dilation)# same THW as input map
         # multiply input by emap, to get the scaled visual words
         scaledvw = torch.mul(vw, emap) # NCTHW
         # convolve with k1 to get an average of neighboring visual words
