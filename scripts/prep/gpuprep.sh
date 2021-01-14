@@ -12,7 +12,8 @@ wget https://developer.download.nvidia.com/compute/cuda/11.2.0/local_installers/
 sudo sh cuda_11.2.0_460.27.04_linux.run
 
 
-
+pip install scikit-image
+pip install tensorboard
 sudo apt-get install git
 pip install  torch torchvision
 pip install  gensim
