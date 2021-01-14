@@ -113,5 +113,5 @@ for epoch in range(n_epochs):
                 'epoch': cntr,
                 'model_state_dict': net.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': LOSS,
+                'loss': loss,
             }, "./model_checkpt")
