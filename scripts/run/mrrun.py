@@ -90,7 +90,7 @@ for epoch in range(n_epochs):
         # prep input
         imgs, Q, L, W = data["image"], data["query_encoding"], data["frame_label"], data["frame_label_pos_weights"]
         imgs, Q, W = list(map(lambda x: x.float(), [imgs, Q, W]))
-        imgs, L, W = imgs[:,:,::4,:,:], L[:,::4], W[:,::4]
+        # imgs, L, W = imgs[:,:,::4,:,:], L[:,::4], W[:,::4]
         L = L.float()
         imgs, Q, L, W = list(map(lambda x: x.to(device), [imgs, Q, L, W]))
         # zero the parameter gradients
