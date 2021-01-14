@@ -108,10 +108,10 @@ for epoch in range(n_epochs):
                   (epoch + 1,  cntr, loss.item(), running_loss / 20))
             running_loss = 0.0
 
-        if i%1000==999:
+        if i%200==199:
             torch.save({
-                'epoch': EPOCH,
+                'epoch': cntr,
                 'model_state_dict': net.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
                 'loss': LOSS,
-            }, "./model_checkpt_{0}".format(i))
+            }, "./model_checkpt")
