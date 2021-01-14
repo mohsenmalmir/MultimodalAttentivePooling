@@ -8,7 +8,7 @@ from skimage import transform
 import gensim.downloader
 from gensim.parsing.preprocessing import remove_stopwords, preprocess_string
 import sys
-sys.path.append('/content/MultimodalAttentivePooling')
+sys.path.append('/home/mmalmir/MultimodalAttentivePooling')
 from multimodalattentivepooling.dataset.momentretrieval import MomentRetrieval
 from multimodalattentivepooling.model.attentiveresnet import r3d_18
 from torch.utils.tensorboard import SummaryWriter
@@ -59,7 +59,7 @@ def labelprep(data):
 
 # data loader
 print("creating the dataloader...")
-tds = MomentRetrieval(Path("tvr_train.json"),Path("./tvqa/"),transform=[word2vec,imresize,labelprep])
+tds = MomentRetrieval(Path("/home/mmalmir/tvr_train.json"),Path("/home/mmalmir/frames_hq/"),transform=[word2vec,imresize,labelprep])
 trainloader = DataLoader(tds, batch_size=1, shuffle=True, num_workers=0)
 
 for ds in trainloader:
