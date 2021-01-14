@@ -103,7 +103,7 @@ for epoch in range(n_epochs):
         # print statistics
         running_loss += loss.item()
         writer.add_scalar("Loss/train", loss, cntr)
-        if i % 20 == 19:    # print every 2000 mini-batches
+        if i % 2 == 1:    # print every 2000 mini-batches
             print('[%d, %5d] loss:%.3f running loss: %.3f' %
                   (epoch + 1,  cntr, loss.item(), running_loss / 20))
             running_loss = 0.0
