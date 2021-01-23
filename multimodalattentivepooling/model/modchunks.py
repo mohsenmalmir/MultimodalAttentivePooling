@@ -8,7 +8,7 @@ import torch
 import numpy as np
 
 
-class WordPhraseAttention(Module):
+class ModulatedChunks(Module):
     """
     This module implements the word-phrase cross attention module for video moment retrieval.
     """
@@ -18,7 +18,7 @@ class WordPhraseAttention(Module):
     phrase_encoder: SeqEncoder
     def __init__(self, window_size, num_chunks, seq_enc1, seq_enc2):
 
-        super(WordPhraseAttention, self).__init__()
+        super(ModulatedChunks, self).__init__()
         self.window_size = window_size
         self.num_chunks = num_chunks
         self.seq_enc1 = seq_enc1

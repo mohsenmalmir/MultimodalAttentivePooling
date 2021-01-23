@@ -1,6 +1,6 @@
 import unittest
 import torch
-from multimodalattentivepooling.model.wordphrase import WordPhraseAttention
+from multimodalattentivepooling.model.modchunks import ModulatedChunks
 from multimodalattentivepooling.model.encoder import SeqEncoder
 from pathlib import Path
 
@@ -21,7 +21,7 @@ class TestDatasets(unittest.TestCase):
         num_chunks = 3
         word_encoder = SeqEncoder(d_model=WD, d_out=C)
         phrase_encoder = SeqEncoder(d_model=PD, d_out=C)
-        wpa = WordPhraseAttention(window_size, num_chunks, word_encoder, phrase_encoder)
+        wpa = ModulatedChunks(window_size, num_chunks, word_encoder, phrase_encoder)
         out = wpa({"vis_feats":vis_feats,"query":words,"phrases":phrases})
         B1, NW, NCH, C1 = out.shape
         self.assertEqual(B, B1)
