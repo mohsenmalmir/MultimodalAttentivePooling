@@ -10,12 +10,13 @@ import numpy as np
 
 class ModulatedChunks(Module):
     """
-    This module implements the word-phrase cross attention module for video moment retrieval.
+    This module implements the modulated chunks idea. Input is assumed to be a set of clips.
+    The output is a set of modulated chunks in a sliding window fashion.
     """
     window_size: int
     num_chunks: int
-    word_encoder: SeqEncoder
-    phrase_encoder: SeqEncoder
+    seq_enc1: SeqEncoder
+    seq_enc2: SeqEncoder
     def __init__(self, window_size, num_chunks, seq_enc1, seq_enc2):
 
         super(ModulatedChunks, self).__init__()
@@ -29,7 +30,7 @@ class ModulatedChunks(Module):
         vis_feats = data["vis_feats"] # B T C
         B, T, C = vis_feats.shape
         print("input visual features:",vis_feats.shape)
-        # encode words
+        # encode query
         query = data["query"] # BxLxC
         print("query size:",query.shape)
         enc1 = self.seq_enc1(query) # module labeld '1' in the slide

@@ -19,10 +19,10 @@ class TestDatasets(unittest.TestCase):
         # encoders
         window_size = 12
         num_chunks = 3
-        word_encoder = SeqEncoder(d_model=WD, d_out=C)
-        phrase_encoder = SeqEncoder(d_model=PD, d_out=C)
-        wpa = ModulatedChunks(window_size, num_chunks, word_encoder, phrase_encoder)
-        out = wpa({"vis_feats":vis_feats,"query":words,"phrases":phrases})
+        encoder1 = SeqEncoder(d_model=WD, d_out=C)
+        encoder2 = SeqEncoder(d_model=PD, d_out=C)
+        wpa = ModulatedChunks(window_size, num_chunks, encoder1, encoder2)
+        out = wpa({"vis_feats":vis_feats,"query":words})
         B1, NW, NCH, C1 = out.shape
         self.assertEqual(B, B1)
         self.assertEqual(C, C1)
