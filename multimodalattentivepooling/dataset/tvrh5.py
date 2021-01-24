@@ -10,19 +10,17 @@ class TVRH5(Dataset):
     This class implements a generic moment retrieval dataset.
     The dataset is organized around a set of frames and a json file that describes moments.
     """
-    def __init__(self, json_file, feats_h5file, query_h5file, transform=None):
+    def __init__(self, json_file, feats_h5file, query_h5file):
         """
         Args:
-            :param json_file(Path): that includes list of videos, queries/time span per video.
-            :param feats_h5file(Path): path to the features file
-            :param query_h5file(Path): path to the query file
-            :param transform(list): list of transform functions for the dataset
+            :param json_file(str): that includes list of videos, queries/time span per video.
+            :param feats_h5file(str): path to the features file
+            :param query_h5file(str): path to the query file
         """
-        with open(json_file.as_posix(),"rt") as f:
+        with open(json_file,"rt") as f:
             self.moments = [json.loads(l) for l in f]
-        self.vis_feats = h5py.File(str(feats_h5file),"r")
-        self.query_feats = h5py.File(str(query_h5file),"r")
-        self.transform = transform
+        self.vis_feats = h5py.File(feats_h5file,"r")
+        self.query_feats = h5py.File(query_h5file,"r")
 
     def __len__(self):
         """
@@ -48,8 +46,4 @@ class TVRH5(Dataset):
                 "query_text":m["desc"],
                 "duration":m["duration"]
                 }
-        # this is to enable a cascade of transforms that are modular, e.g. resize, augment, word2vec, etc.
-        if self.transform:
-            for t in self.transform:
-                data = t(data)
         return data
