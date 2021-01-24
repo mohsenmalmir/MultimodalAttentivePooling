@@ -1,9 +1,6 @@
-from typing import Optional
-from torch import Tensor
 from torch.nn import Module, AdaptiveMaxPool1d, Linear
 import torch.nn.functional as F
-from torch.nn.modules.transformer import TransformerEncoderLayer, TransformerEncoder, LayerNorm
-from .encoder import SeqEncoder
+from multimodalattentivepooling.model.encoder import SeqEncoder
 import torch
 import numpy as np
 
@@ -24,6 +21,7 @@ class ModulatedChunks(Module):
         self.num_chunks = num_chunks
         self.seq_enc1 = seq_enc1
         self.seq_enc2 = seq_enc2
+        self.todel = Linear(1000,1000)
 
     def forward(self,data: dict):
         # video: expected shape of BTC
