@@ -1,4 +1,4 @@
-from multimodalattentivepooling.utils.modload import load_comp, load_args
+from multimodalattentivepooling.utils.moduleload import load_comp, load_args
 
 
 class CompositeTransform:
@@ -14,8 +14,8 @@ class CompositeTransform:
         """
         self.transforms = []
         for transform_name in composite_args["order"]:
-            mod = composite_args[transform_name]["module"]
-            self.transforms.append(load_comp(mod)(**composite_args[transform_name]))
+            mod = composite_args[transform_name]["comp"]
+            self.transforms.append(load_comp(mod)(**composite_args[transform_name]["args"]))
 
     def __call__(self, data):
         """

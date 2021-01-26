@@ -14,14 +14,14 @@ class ModulatedChunks(Module):
     num_chunks: int
     seq_enc1: SeqEncoder
     seq_enc2: SeqEncoder
-    def __init__(self, window_size, num_chunks, seq_enc1, seq_enc2):
+    def __init__(self, window_size, num_chunks, vis_dim, q_dim):
 
         super(ModulatedChunks, self).__init__()
         self.window_size = window_size
         self.num_chunks = num_chunks
-        self.seq_enc1 = seq_enc1
-        self.seq_enc2 = seq_enc2
-        self.todel = Linear(1000,1000)
+        self.seq_enc1 = Linear(q_dim, vis_dim)
+        self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
+        self.pred = Linear(vis_dim, 1)
 
     def forward(self,data: dict):
         # video: expected shape of BTC
@@ -29,7 +29,7 @@ class ModulatedChunks(Module):
         B, T, C = vis_feats.shape
         print("input visual features:",vis_feats.shape)
         # encode query
-        query = data["query"] # BxLxC
+        query = data["query_feats"] # BxLxC
         print("query size:",query.shape)
         enc1 = self.seq_enc1(query) # module labeld '1' in the slide
         print("encoder1:",enc1.shape)
@@ -71,4 +71,6 @@ class ModulatedChunks(Module):
         print("modulated:",modulated.shape)
         modulated = modulated * pooled
         print("output shape:",modulated.shape)
-        return modulated
+        data["pred"] = self.pred(modulated)
+        print("pred shape:",data["pred"].shape)
+        return data
