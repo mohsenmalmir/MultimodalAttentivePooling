@@ -15,7 +15,6 @@ class ModulatedChunks(Module):
     seq_enc1: SeqEncoder
     seq_enc2: SeqEncoder
     def __init__(self, window_size, num_chunks, vis_dim, q_dim):
-
         super(ModulatedChunks, self).__init__()
         self.window_size = window_size
         self.num_chunks = num_chunks
@@ -28,6 +27,10 @@ class ModulatedChunks(Module):
         # self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
         self.pred = Linear(vis_dim, 2)
         self.device = None
+
+    def to(self, device):
+        self.device = device
+        super(ModulatedChunks, self).to(device)
 
     def forward(self,data: dict):
         # video: expected shape of BTC
