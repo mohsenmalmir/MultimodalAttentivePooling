@@ -18,10 +18,10 @@ class ModulatedChunks(Module):
         super(ModulatedChunks, self).__init__()
         self.window_sizes = window_sizes
         self.num_chunks = num_chunks
-        self.vid_enc1 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU())
-        self.vid_enc2 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU())
-        self.seq_enc1 = torch.nn.Sequential(Linear(q_dim, vis_dim),ReLU())
-        self.seq_enc2 = torch.nn.Sequential(Linear(q_dim, vis_dim),ReLU())
+        self.vid_enc1 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim),ReLU())
+        self.vid_enc2 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim),ReLU())
+        self.seq_enc1 = torch.nn.Sequential(Linear(q_dim, q_dim),ReLU(),Linear(q_dim, vis_dim),ReLU())
+        self.seq_enc2 = torch.nn.Sequential(Linear(q_dim, q_dim),ReLU(),Linear(q_dim, vis_dim),ReLU())
         # self.seq_enc1 = Linear(q_dim, vis_dim)
         # self.seq_enc2 = Linear(q_dim, vis_dim)
         # self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
