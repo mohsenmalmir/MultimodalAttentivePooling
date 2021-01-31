@@ -70,7 +70,7 @@ class ModulatedChunks(Module):
         lbls = [[[np.argmax(np.bincount(lbls[b,ii,jj,:])) for jj in range(self.num_chunks)] for ii in range(NW)] for b in range(B)]
         lbls = torch.tensor(lbls).long().unsqueeze(3).repeat(1,1,1,C)
         if self.device:
-            lbls = lbls.to(device)
+            lbls = lbls.to(self.device)
         # print("majority vote labels:",lbls.shape)
         # pooling each window to fixed size
         vis_feats_unfolded = vis_feats_unfolded.view(B, NW, self.num_chunks, clips_in_chunk, C)
