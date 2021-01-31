@@ -66,7 +66,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             # pass data through transforms
             data = transforms(data)
             for n in train_args["device"]["data"]:
-                data[n].to(device)
+                data[n] = data[n].to(device)
             # network output
             data = net(data)
             # calculate loss, backpropagate, step
