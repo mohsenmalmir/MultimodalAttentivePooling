@@ -32,3 +32,6 @@ class TorchLossWrapper:
         data["loss"] = self.loss(data[self.out_name], data[self.tgt_name])
         return data
 
+    def to(self, device):
+        self.loss.to(device)
+

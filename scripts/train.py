@@ -60,6 +60,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     # training loop
     device = torch.device(train_args["device"]["name"])
     net.to(device)
+    loss.to(device)
     for epoch in range(train_args["nepochs"]):
         for epoch_index, data in enumerate(dataloader):
             optimizer.zero_grad()
