@@ -1,0 +1,6 @@
+module:
+  comp: torch.nn.CrossEntropyLoss
+  args:
+    weight: [1., 9.98335807]
+out_name: pred
+tgt_name: gt

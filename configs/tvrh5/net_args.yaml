@@ -1,0 +1,4 @@
+window_size: 33
+num_chunks: 3
+vis_dim: 1024
+q_dim: 768

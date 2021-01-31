@@ -23,4 +23,12 @@ def load_args(args_file):
         return dict()
     with open(args_file,"rt") as f:
         args = yaml.load(f, Loader=yaml.FullLoader)
+    # if there are modules as args, load the modules
+    if "modules" in args.keys():
+        for arg_name in args["modules"].keys():
+            comp = load_comp(args["modules"][arg_name]["comp"])
+            arg_args = args["modules"][arg_name]["args"]
+            comp = comp(**arg_args)
+            args[arg_name] = comp
+        del args["modules"]
     return args

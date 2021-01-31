@@ -1,0 +1,6 @@
+module:
+  comp: torch.nn.BCEWithLogitsLoss
+  args:
+    pos_weight: 14.41013107
+out_name: pred
+tgt_name: gt

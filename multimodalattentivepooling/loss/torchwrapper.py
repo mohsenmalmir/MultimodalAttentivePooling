@@ -28,6 +28,7 @@ class TorchLossWrapper:
         :param data(dict): containing network output and target
         :return: updated data, with "loss"
         """
+        # print(data[self.out_name].shape, data[self.tgt_name].shape)
         data["loss"] = self.loss(data[self.out_name], data[self.tgt_name])
         return data
 

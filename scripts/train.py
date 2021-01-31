@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
 import numpy as np
+import torch
+from sklearn.metrics import confusion_matrix
 from multimodalattentivepooling.utils.moduleload import load_comp, load_args
 
 def create_parse():
@@ -56,17 +58,38 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     loss = loss(**loss_args)
     train_args = load_args(train_args)
     # training loop
+    device = torch.device(train_args["device"]["name"])
+    net.to(device)
     for epoch in range(train_args["nepochs"]):
         for epoch_index, data in enumerate(dataloader):
             optimizer.zero_grad()
             # pass data through transforms
             data = transforms(data)
+            for n in train_args["device"]["data"]:
+                data[n].to(device)
             # network output
             data = net(data)
             # calculate loss, backpropagate, step
             data = loss(data)
             data["loss"].backward()
+            print(data["loss"].item())
             optimizer.step()
+            # misclassification
+            pred = data["pred"]
+            pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
+            gt = data["gt"].data.cpu().numpy().reshape(-1)
+            idx = np.where(gt != -100)
+            print(confusion_matrix(gt[idx], pred[idx]))
+            # print(pred.shape, gt.shape)
+            # pred = data["pred"].data.cpu().numpy()
+            # pred = np.argmax(pred,axis=1).reshape(-1)
+            # print(pred.shape)
+            # gt = data["gt"].data.cpu().numpy()
+            # print(gt.shape)
+            # print(pred.shape,gt.shape)
+            # idx = np.where(gt != -100)
+            # print(idx)
+            # print(gt.shape,pred[idx].shape)
 
     print(train_args)
 

@@ -1,0 +1,12 @@
+order: ["ChunkIoU"]
+ChunkIoU:
+  comp: multimodalattentivepooling.transform.slidingwindow.ChunkIoU
+  args:
+    window_size: 33
+    num_chunks: 3
+    iou: 0.3
+    in_name: vis_feats
+    len_name: vis_len
+    dur_name: duration
+    ts_name: ts
+    out_name: gt
