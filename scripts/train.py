@@ -73,14 +73,15 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             # calculate loss, backpropagate, step
             data = loss(data)
             data["loss"].backward()
-            print(data["loss"].item())
+            print(epoch_index,data["loss"].item())
             optimizer.step()
             # misclassification
-            pred = data["win33"]
-            pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
-            gt = data["win33gt"].data.cpu().numpy().reshape(-1)
-            idx = np.where(gt != -100)
-            print(confusion_matrix(gt[idx], pred[idx]))
+            if epoch_index%10==0:
+                pred = data["win33"]
+                pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
+                gt = data["win33gt"].data.cpu().numpy().reshape(-1)
+                idx = np.where(gt != -100)
+                print(confusion_matrix(gt[idx], pred[idx]))
 
 
 
