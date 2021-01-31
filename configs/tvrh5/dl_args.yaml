@@ -1,4 +1,4 @@
-batch_size: 16
+batch_size: 4
 shuffle: True
 num_workers: 0
 modules:

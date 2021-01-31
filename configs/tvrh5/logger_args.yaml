@@ -1,0 +1,8 @@
+order: ["bincount"]
+bincount:
+  comp: multimodalattentivepooling.log.instats.BinCount
+  args:
+    in_names: [win3gt,win6gt,win9gt,win12gt,win21gt,win33gt,win42gt,win54gt,win66gt]
+    ignore_val: -100
+    bin_sizes: [2,2,2,2,2,2,2,2,2]
+    print_interval: 1000

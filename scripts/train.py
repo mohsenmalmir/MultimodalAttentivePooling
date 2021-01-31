@@ -76,23 +76,12 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             print(data["loss"].item())
             optimizer.step()
             # misclassification
-            pred = data["pred"]
+            pred = data["win33"]
             pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
-            gt = data["gt"].data.cpu().numpy().reshape(-1)
+            gt = data["win33gt"].data.cpu().numpy().reshape(-1)
             idx = np.where(gt != -100)
             print(confusion_matrix(gt[idx], pred[idx]))
-            # print(pred.shape, gt.shape)
-            # pred = data["pred"].data.cpu().numpy()
-            # pred = np.argmax(pred,axis=1).reshape(-1)
-            # print(pred.shape)
-            # gt = data["gt"].data.cpu().numpy()
-            # print(gt.shape)
-            # print(pred.shape,gt.shape)
-            # idx = np.where(gt != -100)
-            # print(idx)
-            # print(gt.shape,pred[idx].shape)
 
-    print(train_args)
 
 
 if __name__=="__main__":

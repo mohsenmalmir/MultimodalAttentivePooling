@@ -15,7 +15,7 @@ class CollateTVRH5:
         query_len = [d["query_feats"].shape[0] for d in data] # T C
         QD = data[0]["vis_feats"].shape[1] # Query feat size
         # find max vid len, padd
-        mx_vid_len = max(vis_len)
+        mx_vid_len = max(max(vis_len),66)
         vis_feats = [np.pad(d["vis_feats"],((0,mx_vid_len-l),(0,0)))[np.newaxis,...] for d,l in zip(data,vis_len)]
         vis_feats = np.concatenate(vis_feats,axis=0)
         # print(vis_feats.shape)
