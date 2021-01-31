@@ -27,6 +27,7 @@ class ModulatedChunks(Module):
         # self.seq_enc2 = Linear(q_dim, vis_dim)
         # self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
         self.pred = Linear(vis_dim, 2)
+        self.device = None
 
     def forward(self,data: dict):
         # video: expected shape of BTC
@@ -65,6 +66,8 @@ class ModulatedChunks(Module):
         lbls = clip_labels_unfolded.data.cpu().numpy().astype(int)
         lbls = [[[np.argmax(np.bincount(lbls[b,ii,jj,:])) for jj in range(self.num_chunks)] for ii in range(NW)] for b in range(B)]
         lbls = torch.tensor(lbls).long().unsqueeze(3).repeat(1,1,1,C)
+        if self.device:
+            lbls = lbls.to(device)
         # print("majority vote labels:",lbls.shape)
         # pooling each window to fixed size
         vis_feats_unfolded = vis_feats_unfolded.view(B, NW, self.num_chunks, clips_in_chunk, C)
