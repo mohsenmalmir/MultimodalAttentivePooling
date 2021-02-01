@@ -1,6 +1,7 @@
 from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU
 import torch.nn.functional as F
 from multimodalattentivepooling.model.encoder import SeqEncoder
+from multimodalattentivepooling.model.sequtils import PositionalEncoding
 import torch
 import numpy as np
 
@@ -16,6 +17,10 @@ class ModulatedChunks(Module):
     seq_enc2: SeqEncoder
     def __init__(self, window_sizes, num_chunks, vis_dim, q_dim, out_names):
         super(ModulatedChunks, self).__init__()
+        # positional encodings of the sequences
+        self.vid_pe = PositionalEncoding(vis_dim)
+        self.seq_pe = PositionalEncoding(q_dim)
+        # window sizes etc.
         self.window_sizes = window_sizes
         self.num_chunks = num_chunks
         self.vid_enc1 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim),ReLU())
@@ -36,11 +41,13 @@ class ModulatedChunks(Module):
     def forward(self,data: dict):
         # video: expected shape of BTC
         vis_feats = data["vis_feats"] # B T C
+        vis_feats = self.vid_pe(vis_feats) # positional signal included in the features
         vis_feats = self.vid_enc1(vis_feats)
         B, T, C = vis_feats.shape
         # print("input visual features:",vis_feats.shape)
         # encode query
         query = data["query_feats"] # BxLxC
+        query = self.seq_pe(query) # add positional signals to the query
         # print("query size:",query.shape)
         enc1 = self.seq_enc1(query) # module labeld '1' in the slide
         # print("encoder1:",enc1.shape)
