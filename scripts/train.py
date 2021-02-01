@@ -75,8 +75,8 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             data["loss"].backward()
             optimizer.step()
             # misclassification
-            if epoch_index%100==0:
-                print(epoch_index,data["loss"].item())
+            if epoch_index%500==0:
+                print(epoch, epoch_index,data["loss"].item())
                 pred = data["win33"]
                 pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
                 gt = data["win33gt"].data.cpu().numpy().reshape(-1)
