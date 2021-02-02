@@ -94,5 +94,7 @@ class ModulatedChunks(Module):
             modulated = modulated * pooled
             # print("output shape:",modulated.shape)
             # data["pred"] = self.pred(modulated).squeeze(-1)
-            data[self.out_names[jj]] = self.pred(modulated).transpose(2,3).transpose(1,2)
+            data[self.out_names[jj]] = self.pred(modulated)
+            # this is to make sure the output directly works with BCEloss, e.g. B N_Classes D1 D2 ...
+            # data[self.out_names[jj]] = self.pred(modulated).transpose(2,3).transpose(1,2)
         return data

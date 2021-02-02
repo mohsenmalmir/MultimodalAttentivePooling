@@ -1,0 +1,55 @@
+TorchArrayLoss:
+  win3:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win3
+    tgt_name: win3gt
+    sample_ratio: .1
+  win6:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win6
+    tgt_name: win6gt
+    sample_ratio: .1
+  win9:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win9
+    tgt_name: win9gt
+    sample_ratio: .1
+  win12:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win12
+    tgt_name: win12gt
+    sample_ratio: .1
+  win21:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win21
+    tgt_name: win21gt
+    sample_ratio: .1
+  win33:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win33
+    tgt_name: win33gt
+    sample_ratio: .1
+  win42:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win42
+    tgt_name: win42gt
+    sample_ratio: .1
+  win54:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win54
+    tgt_name: win54gt
+    sample_ratio: .1
+  win66:
+    comp: torch.nn.CrossEntropyLoss
+    args: {}
+    pred_name: win66
+    tgt_name: win66gt
+    sample_ratio: .1
