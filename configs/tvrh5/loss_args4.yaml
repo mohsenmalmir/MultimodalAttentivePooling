@@ -17,17 +17,17 @@ TorchArrayLoss:
     pred_name: win9
     tgt_name: win9gt
     sample_ratio: .5
-  wi.52:
+  win12:
     comp: torch.nn.CrossEntropyLoss
     args: {}
-    pred_name: wi.52
-    tgt_name: wi.52gt
+    pred_name: win12
+    tgt_name: win12gt
     sample_ratio: .5
-  win.5:
+  win21:
     comp: torch.nn.CrossEntropyLoss
     args: {}
-    pred_name: win.5
-    tgt_name: win.5gt
+    pred_name: win21
+    tgt_name: win21gt
     sample_ratio: .5
   win33:
     comp: torch.nn.CrossEntropyLoss
