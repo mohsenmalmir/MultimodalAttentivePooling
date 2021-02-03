@@ -15,7 +15,8 @@ class ModulatedChunks(Module):
     num_chunks: int
     seq_enc1: SeqEncoder
     seq_enc2: SeqEncoder
-    def __init__(self, window_sizes, num_chunks, vis_dim, q_dim, out_names):
+    def __init__(self, window_sizes, num_chunks, vis_dim, q_dim, len_name, stend_mxpoolsz, out_names,
+                 stpred_name, endpred_name):
         super(ModulatedChunks, self).__init__()
         # positional encodings of the sequences
         self.vid_pe = PositionalEncoding(vis_dim)
@@ -31,8 +32,15 @@ class ModulatedChunks(Module):
         # self.seq_enc2 = Linear(q_dim, vis_dim)
         # self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
         self.pred = Linear(vis_dim, 2)
+        # map maxpooled sequence, each of size vis_dim to maxpooled vector
+        self.start_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
+        self.end_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
         self.device = None
+        self.len_name = len_name
         self.out_names = out_names
+        self.maxpool_startend = AdaptiveMaxPool1d(stend_mxpoolsz)
+        self.stpred_name = stpred_name
+        self.endpred_name = endpred_name
 
     def to(self, device):
         self.device = device
@@ -94,7 +102,17 @@ class ModulatedChunks(Module):
             modulated = modulated * pooled
             # print("output shape:",modulated.shape)
             # data["pred"] = self.pred(modulated).squeeze(-1)
-            data[self.out_names[jj]] = self.pred(modulated)
+            # data[self.out_names[jj]] = self.pred(modulated)
             # this is to make sure the output directly works with BCEloss, e.g. B N_Classes D1 D2 ...
-            # data[self.out_names[jj]] = self.pred(modulated).transpose(2,3).transpose(1,2)
+            data[self.out_names[jj]] = self.pred(modulated).transpose(2,3).transpose(1,2)
+            if jj==0:
+                _, _, _, D = modulated.shape
+                # modulated has shape B NW NC CS
+                # sequence length is len - window_sizes[0] + 1 or len???
+                modulated = [modulated[bb,:l,:,:].view(-1,D).unsqueeze(0).transpose(1,2) for bb,l in zip(range(B),data[self.len_name])]
+                # max-pool
+                max_pooled = torch.cat([self.maxpool_startend(m) for m in modulated],dim=0)
+                max_pooled = max_pooled.view(B, -1)
+                data[self.stpred_name] = self.start_pred(max_pooled).unsqueeze(2)
+                data[self.endpred_name] = self.end_pred(max_pooled).unsqueeze(2)
         return data

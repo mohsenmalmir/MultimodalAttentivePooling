@@ -1,0 +1,8 @@
+order: ["bincount"]
+bincount:
+  comp: multimodalattentivepooling.log.instats.BinCount
+  args:
+    in_names: [sttgt_maxpooled,endtgt_maxpooled]
+    ignore_val: -100
+    bin_sizes: [50,50]
+    print_interval: 1000

@@ -27,3 +27,7 @@ class CompositeTransform:
         for t in self.transforms:
             data = t(data)
         return data
+
+    def to(self, device):
+        for t in self.transforms:
+            t.to(device)

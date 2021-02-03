@@ -29,7 +29,9 @@ class TorchLossWrapper:
         :param data(dict): containing network output and target
         :return: updated data, with "loss"
         """
-        data["loss"] = self.loss(data[self.out_name], data[self.tgt_name])
+        if "loss" not in data.keys():
+            data["loss"] = 0
+        data["loss"] = data["loss"] + self.loss(data[self.out_name], data[self.tgt_name])
         return data
 
     def to(self, device):
