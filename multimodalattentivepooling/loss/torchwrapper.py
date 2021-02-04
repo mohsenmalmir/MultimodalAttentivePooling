@@ -60,7 +60,7 @@ class TorchLossArray:
         :param data(dict): containing network output and target
         :return: updated data, with "loss"
         """
-        L = 0
+        L = data["loss"]
         for mod_name in self.loss.keys():
             L = L + self.loss[mod_name](data[self.pred_name[mod_name]], data[self.tgt_name[mod_name]])
         data["loss"] = L

@@ -1,4 +1,4 @@
-order: [StartLoss, EndLoss]
+order: [StartLoss, EndLoss, SegmentLoss]
 StartLoss:
   comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
   args:
@@ -35,3 +35,62 @@ EndLoss:
                   0.16725979, 0.15422477, 0.15359477, 0.16681455, 0.02243704 ]
     out_name: end_maxpooled
     tgt_name: endtgt_maxpooled
+SegmentLoss:
+  comp: multimodalattentivepooling.loss.torchwrapper.TorchLossArray
+  args:
+    TorchArrayLoss:
+      win3:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,62.9948071]
+        pred_name: win3
+        tgt_name: win3gt
+      win6:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,25.48737078]
+        pred_name: win6
+        tgt_name: win6gt
+      win9:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,18.01555171]
+        pred_name: win9
+        tgt_name: win9gt
+      win12:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,14.68179636]
+        pred_name: win12
+        tgt_name: win12gt
+      win21:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,11.0052653]
+        pred_name: win21
+        tgt_name: win21gt
+      win33:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,9.89231081]
+        pred_name: win33
+        tgt_name: win33gt
+      win42:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,9.5789914]
+        pred_name: win42
+        tgt_name: win42gt
+      win54:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,9.26058395]
+        pred_name: win54
+        tgt_name: win54gt
+      win66:
+        comp: torch.nn.CrossEntropyLoss
+        args:
+          weight: [1.,9.55396437]
+        pred_name: win66
+        tgt_name: win66gt
+
