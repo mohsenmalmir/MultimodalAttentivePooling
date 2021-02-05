@@ -6,7 +6,7 @@ SegmentLoss:
       win3:
         comp: torch.nn.CrossEntropyLoss
         args:
-          pos_weight: [1.,62.9948071]
+          weight: [1.,62.9948071]
         pred_name: win3
         tgt_name: win3gt
       win6:
