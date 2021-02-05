@@ -67,19 +67,19 @@ class ModulatedChunks(Module):
         # this is modified on Feb 04 to make the word assignment probabilistic
         clip_word_sim_np = clip_word_sim.data.cpu().numpy()
         # clip_word_sim_np = np.exp(clip_word_sim_np)
-        clip_word_sim_np = clip_word_sim_np - np.min(clip_word_sim_np,axis=2,keepdims=True)
-        clip_word_sim_np = clip_word_sim_np / np.sum(clip_word_sim_np,axis=2,keepdims=True)
-        B, NUMC, NUMQ = clip_word_sim_np.shape
+        # clip_word_sim_np = clip_word_sim_np - np.min(clip_word_sim_np,axis=2,keepdims=True)
+        # clip_word_sim_np = clip_word_sim_np / np.sum(clip_word_sim_np,axis=2,keepdims=True)
+        # B, NUMC, NUMQ = clip_word_sim_np.shape
         # print("word-clip sim:",clip_word_sim.shape)
-        # clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
+        clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
         # print("clip labels:",clip_labels.shape)
         # transpose C to dim=1 to apply unfold
         vis_feats = vis_feats.transpose(1, 2).unsqueeze(3)# convert to [B, C, NC, 1)
         # print("vis_feats before unfold:",vis_feats.shape)
         # unfold visual feats
         for jj in range(len(self.window_sizes)):
-            clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
-            clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
+            # clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
+            # clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
             ks = (self.window_sizes[jj], 1)
             st, pd, dl = (1, 1), (0, 0), (1, 1)
             vis_feats_unfolded = F.unfold(vis_feats, ks, dl, pd, st)
