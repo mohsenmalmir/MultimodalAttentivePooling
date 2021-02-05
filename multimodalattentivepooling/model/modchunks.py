@@ -94,6 +94,8 @@ class ModulatedChunks(Module):
             # unfold labels to correspond to sliding window
             lbls = clip_labels_unfolded.data.cpu().numpy().astype(int)
             lbls = [[[np.argmax(np.bincount(lbls[b,ii,jj,:])) for jj in range(self.num_chunks[jj])] for ii in range(NW)] for b in range(B)]
+            if np.random.uniform(0,1)<0.01:
+                print(lbls)
             # print(lbls)
             lbls = torch.tensor(lbls).long().unsqueeze(3).repeat(1,1,1,C)
             if self.device:
