@@ -31,7 +31,8 @@ class TorchLossWrapper:
         """
         if "loss" not in data.keys():
             data["loss"] = 0
-        data["loss"] = data["loss"] + self.loss(data[self.out_name], data[self.tgt_name])
+        data["loss"] = data["loss"] + 0.001 * self.loss(data[self.out_name], data[self.tgt_name])
+        print(data["loss"])
         return data
 
     def to(self, device):
@@ -60,9 +61,12 @@ class TorchLossArray:
         :param data(dict): containing network output and target
         :return: updated data, with "loss"
         """
+        if "loss" not in data.keys():
+            data["loss"] = 0
         L = data["loss"]
         for mod_name in self.loss.keys():
             L = L + self.loss[mod_name](data[self.pred_name[mod_name]], data[self.tgt_name[mod_name]])
+            # print(mod_name,L)
         data["loss"] = L
         return data
 
@@ -95,7 +99,9 @@ class TorchLossSamplingArray:
         :param data(dict): containing network output and target
         :return: updated data, with "loss"
         """
-        L = 0
+        if "loss" not in data.keys():
+            data["loss"] = 0
+        L = data["loss"]
         for mod_name in self.loss.keys():
             # sample target
             tgt = torch.nonzero(data[self.tgt_name[mod_name]]==1,as_tuple=True)

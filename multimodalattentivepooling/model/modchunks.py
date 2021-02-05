@@ -106,6 +106,7 @@ class ModulatedChunks(Module):
             modulated = torch.gather(enc2_weights,2,lbls)
             # print("modulated:",modulated.shape)
             modulated = modulated * pooled
+            # modulated = pooled
             # print("output shape:",modulated.shape)
             # data["pred"] = self.pred(modulated).squeeze(-1)
             # data[self.out_names[jj]] = self.pred(modulated)
