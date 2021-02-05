@@ -59,36 +59,38 @@ class ModulatedChunks(Module):
         # print("query size:",query.shape)
         epsilon = 1.e-5
         enc1 = self.seq_enc1(query) # module labeld '1' in the slide
-        enc1_sum = torch.sum(enc1,dim=2,keepdims=True) + epsilon
-        enc1 = enc1 / enc1_sum # make sure size of the encodings is normed
+        # enc1_sum = torch.sum(enc1,dim=2,keepdims=True) + epsilon
+        # enc1 = enc1 / enc1_sum # make sure size of the encodings is normed
         # print(enc1)
         # print("encoder1:",enc1.shape)
         enc2 = self.seq_enc2(query) # module labeled '2' in the slide
-        enc2_sum = torch.sum(enc2,dim=2,keepdims=True) + epsilon
-        enc2 = enc2 / enc2_sum # make sure size of the encodings is normed
+        # enc2_sum = torch.sum(enc2,dim=2,keepdims=True) + epsilon
+        # enc2 = enc2 / enc2_sum # make sure size of the encodings is normed
         # print(enc2)
         # print(enc2)
         # print("encoder2:",enc2.shape)
         # clip-word similarity
         clip_word_sim = torch.matmul(vis_feats,enc1.transpose(1,2)) # NC x NWORDS
+        clip_word_sim = torch.clamp(clip_word_sim,-2.,2.)
+        # print(clip_word_sim)
         # print(clip_word_sim)
         # this is modified on Feb 04 to make the word assignment probabilistic
-        clip_word_sim_np = clip_word_sim.data.cpu().numpy()
-        clip_word_sim_np = np.exp(clip_word_sim_np)
-        clip_word_sim_np = clip_word_sim_np - np.min(clip_word_sim_np,axis=2,keepdims=True)
-        clip_word_sim_np = clip_word_sim_np / np.sum(clip_word_sim_np,axis=2,keepdims=True)
-        clip_word_sim_np[np.where(clip_word_sim_np==0)] = epsilon
-        B, NUMC, NUMQ = clip_word_sim_np.shape
+        # clip_word_sim_np = clip_word_sim.data.cpu().numpy()
+        # clip_word_sim_np = np.exp(clip_word_sim_np)
+        # clip_word_sim_np = clip_word_sim_np - np.min(clip_word_sim_np,axis=2,keepdims=True)
+        # clip_word_sim_np = clip_word_sim_np / np.sum(clip_word_sim_np,axis=2,keepdims=True)
+        # clip_word_sim_np[np.where(clip_word_sim_np==0)] = epsilon
+        # B, NUMC, NUMQ = clip_word_sim_np.shape
         # print("word-clip sim:",clip_word_sim.shape)
-        # clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
+        clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
         # print("clip labels:",clip_labels.shape)
         # transpose C to dim=1 to apply unfold
         vis_feats = vis_feats.transpose(1, 2).unsqueeze(3)# convert to [B, C, NC, 1)
         # print("vis_feats before unfold:",vis_feats.shape)
         # unfold visual feats
         for jj in range(len(self.window_sizes)):
-            clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
-            clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
+            # clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
+            # clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
             ks = (self.window_sizes[jj], 1)
             st, pd, dl = (1, 1), (0, 0), (1, 1)
             vis_feats_unfolded = F.unfold(vis_feats, ks, dl, pd, st)
