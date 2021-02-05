@@ -31,8 +31,7 @@ class TorchLossWrapper:
         """
         if "loss" not in data.keys():
             data["loss"] = 0
-        data["loss"] = data["loss"] + 0.001 * self.loss(data[self.out_name], data[self.tgt_name])
-        print(data["loss"])
+        data["loss"] = data["loss"] + self.loss(data[self.out_name], data[self.tgt_name])
         return data
 
     def to(self, device):

@@ -120,14 +120,14 @@ class ModulatedChunks(Module):
             # data[self.out_names[jj]] = self.pred(modulated)
             # this is to make sure the output directly works with BCEloss, e.g. B N_Classes D1 D2 ...
             data[self.out_names[jj]] = self.pred(modulated).transpose(2,3).transpose(1,2)
-            # if jj==0:
-            #     _, _, _, D = modulated.shape
+            if jj==0:
+                _, _, _, D = modulated.shape
                 # modulated has shape B NW NC CS
                 # sequence length is len - window_sizes[0] + 1 or len???
-                # modulated = [modulated[bb,:l,:,:].view(-1,D).unsqueeze(0).transpose(1,2) for bb,l in zip(range(B),data[self.len_name])]
+                modulated = [modulated[bb,:l,:,:].view(-1,D).unsqueeze(0).transpose(1,2) for bb,l in zip(range(B),data[self.len_name])]
                 # max-pool
-                # max_pooled = torch.cat([self.maxpool_startend(m) for m in modulated],dim=0)
-                # max_pooled = max_pooled.view(B, -1)
-                # data[self.stpred_name] = self.start_pred(max_pooled).unsqueeze(2)
-                # data[self.endpred_name] = self.end_pred(max_pooled).unsqueeze(2)
+                max_pooled = torch.cat([self.maxpool_startend(m) for m in modulated],dim=0)
+                max_pooled = max_pooled.view(B, -1)
+                data[self.stpred_name] = self.start_pred(max_pooled).unsqueeze(2)
+                data[self.endpred_name] = self.end_pred(max_pooled).unsqueeze(2)
         return data
