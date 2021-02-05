@@ -3,7 +3,7 @@ ChunkIoU:
   comp: multimodalattentivepooling.transform.slidingwindow.ChunkIoU
   args:
     window_sizes: [3,6,9,12,21,33,42,54,66]
-    num_chunks: [1,1,1,1,1,1,1,1,1]
+    num_chunks: [3,3,3,3,3,3,3,3,3]
     iou: 0.3
     in_name: vis_feats
     len_name: vis_len

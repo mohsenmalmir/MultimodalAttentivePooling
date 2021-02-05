@@ -78,12 +78,14 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             if epoch_index%500==0:
                 print(epoch, epoch_index,data["loss"].item())
                 pred = data["win33"]
-                pred = torch.argmax(pred,dim=3).data.cpu().numpy().reshape(-1)
+                # print(pred.shape)
+                pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
                 gt = data["win33gt"].data.cpu().numpy().reshape(-1)
+                # print(data["win33gt"].shape)
                 idx = np.where(gt != -100)
                 print(confusion_matrix(gt[idx], pred[idx]))
-                print(data["sttgt_maxpooled"].tolist(),torch.argmax(data["start_maxpooled"],dim=1).tolist())
-                print(data["endtgt_maxpooled"].tolist(),torch.argmax(data["end_maxpooled"],dim=1).tolist())
+                # print(data["sttgt_maxpooled"].tolist(),torch.argmax(data["start_maxpooled"],dim=1).tolist())
+                # print(data["endtgt_maxpooled"].tolist(),torch.argmax(data["end_maxpooled"],dim=1).tolist())
 
 
 

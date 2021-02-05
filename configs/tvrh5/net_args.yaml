@@ -1,5 +1,5 @@
 window_sizes: [3,6,9,12,21,33,42,54,66]
-num_chunks: [1,1,1,1,1,1,1,1,1]
+num_chunks: [3,3,3,3,3,3,3,3,3]
 out_names: [win3,win6,win9,win12,win21,win33,win42,win54,win66]
 vis_dim: 1024
 q_dim: 768
