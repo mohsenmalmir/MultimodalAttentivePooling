@@ -24,8 +24,8 @@ class ModulatedChunks(Module):
         # window sizes etc.
         self.window_sizes = window_sizes
         self.num_chunks = num_chunks
-        self.vid_enc1 = torch.nn.Sequential(Linear(vis_dim, vis_dim))#,ReLU(),Linear(vis_dim, vis_dim))
-        self.vid_enc2 = torch.nn.Sequential(Linear(vis_dim, vis_dim))#,ReLU(),Linear(vis_dim, vis_dim))
+        # self.vid_enc1 = torch.nn.Sequential(Linear(vis_dim, vis_dim))#,ReLU(),Linear(vis_dim, vis_dim))
+        # self.vid_enc2 = torch.nn.Sequential(Linear(vis_dim, vis_dim))#,ReLU(),Linear(vis_dim, vis_dim))
         self.seq_enc1 = torch.nn.Sequential(Linear(q_dim, vis_dim))#,ReLU(),Linear(q_dim, vis_dim))
         self.seq_enc2 = torch.nn.Sequential(Linear(q_dim, vis_dim))#,ReLU(),Linear(q_dim, vis_dim))
         # self.seq_enc1 = Linear(q_dim, vis_dim)
@@ -50,7 +50,7 @@ class ModulatedChunks(Module):
         # video: expected shape of BTC
         vis_feats = data["vis_feats"] # B T C
         vis_feats = self.vid_pe(vis_feats) # positional signal included in the features
-        vis_feats = self.vid_enc1(vis_feats)
+        # vis_feats = self.vid_enc1(vis_feats)
         B, T, C = vis_feats.shape
         # print("input visual features:",vis_feats.shape)
         # encode query
@@ -116,7 +116,7 @@ class ModulatedChunks(Module):
             vis_feats_unfolded = vis_feats_unfolded.view(B, NW, self.num_chunks[jj], clips_in_chunk, C)
             # print("before pool size:",vis_feats_unfolded.shape)
             pooled = F.adaptive_avg_pool3d(vis_feats_unfolded, (self.num_chunks[jj],1,C)).squeeze(3)# output is B NW NCHUNK C
-            pooled = self.vid_enc2(pooled)
+            # pooled = self.vid_enc2(pooled)
             # print("pooled:",pooled.shape)
             # modulate each chunk
             enc2_weights = enc2.unsqueeze(1).repeat(1,NW,1,1)
