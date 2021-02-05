@@ -49,15 +49,15 @@ class ModulatedChunks(Module):
     def forward(self,data: dict):
         # video: expected shape of BTC
         vis_feats = data["vis_feats"] # B T C
-        vis_feats = self.vid_pe(vis_feats) # positional signal included in the features
+        # vis_feats = self.vid_pe(vis_feats) # positional signal included in the features
         # vis_feats = self.vid_enc1(vis_feats)
         B, T, C = vis_feats.shape
         # print("input visual features:",vis_feats.shape)
         # encode query
         query = data["query_feats"] # BxLxC
-        query = self.seq_pe(query) # add positional signals to the query
+        # query = self.seq_pe(query) # add positional signals to the query
         # print("query size:",query.shape)
-        epsilon = 1.e-5
+        epsilon = 1.e-7
         enc1 = self.seq_enc1(query) # module labeld '1' in the slide
         # enc1_sum = torch.sum(enc1,dim=2,keepdims=True) + epsilon
         # enc1 = enc1 / enc1_sum # make sure size of the encodings is normed
@@ -71,26 +71,28 @@ class ModulatedChunks(Module):
         # print("encoder2:",enc2.shape)
         # clip-word similarity
         clip_word_sim = torch.matmul(vis_feats,enc1.transpose(1,2)) # NC x NWORDS
-        clip_word_sim = torch.clamp(clip_word_sim,-2.,2.)
+        # clip_word_sim = torch.clamp(clip_word_sim,-2.,2.)
         # print(clip_word_sim)
         # print(clip_word_sim)
         # this is modified on Feb 04 to make the word assignment probabilistic
-        # clip_word_sim_np = clip_word_sim.data.cpu().numpy()
-        # clip_word_sim_np = np.exp(clip_word_sim_np)
-        # clip_word_sim_np = clip_word_sim_np - np.min(clip_word_sim_np,axis=2,keepdims=True)
-        # clip_word_sim_np = clip_word_sim_np / np.sum(clip_word_sim_np,axis=2,keepdims=True)
-        # clip_word_sim_np[np.where(clip_word_sim_np==0)] = epsilon
-        # B, NUMC, NUMQ = clip_word_sim_np.shape
+        clip_word_sim_np = clip_word_sim.data.cpu().numpy()
+        clip_word_sim_np = np.exp(clip_word_sim_np)
+        clip_word_sim_np = clip_word_sim_np - np.min(clip_word_sim_np,axis=2,keepdims=True)
+        clip_word_sim_np[np.where(clip_word_sim_np==0)] = epsilon
+        clip_word_sim_np_sum = np.sum(clip_word_sim_np,axis=2,keepdims=True)
+        # clip_word_sim_np_sum[np.where(clip_word_sim_np_sum==0)] = 1.
+        clip_word_sim_np = clip_word_sim_np / clip_word_sim_np_sum
+        B, NUMC, NUMQ = clip_word_sim_np.shape
         # print("word-clip sim:",clip_word_sim.shape)
-        clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
+        # clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
         # print("clip labels:",clip_labels.shape)
         # transpose C to dim=1 to apply unfold
         vis_feats = vis_feats.transpose(1, 2).unsqueeze(3)# convert to [B, C, NC, 1)
         # print("vis_feats before unfold:",vis_feats.shape)
         # unfold visual feats
         for jj in range(len(self.window_sizes)):
-            # clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
-            # clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
+            clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
+            clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
             ks = (self.window_sizes[jj], 1)
             st, pd, dl = (1, 1), (0, 0), (1, 1)
             vis_feats_unfolded = F.unfold(vis_feats, ks, dl, pd, st)
@@ -105,7 +107,7 @@ class ModulatedChunks(Module):
             # unfold labels to correspond to sliding window
             lbls = clip_labels_unfolded.data.cpu().numpy().astype(int)
             lbls = [[[np.argmax(np.bincount(lbls[b,ii,jj,:])) for jj in range(self.num_chunks[jj])] for ii in range(NW)] for b in range(B)]
-            if np.random.uniform(0,1)<0.01:
+            if jj==0 and np.random.uniform(0,1)<.01:
                 print(lbls[0])
             # print(lbls)
             lbls = torch.tensor(lbls).long().unsqueeze(3).repeat(1,1,1,C)
