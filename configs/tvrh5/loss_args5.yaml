@@ -42,55 +42,55 @@ SegmentLoss:
       win3:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,62.9948071]
+          weight: [0.01587432, 1.]
         pred_name: win3
         tgt_name: win3gt
       win6:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,25.48737078]
+          weight: [0.03923512,1.]
         pred_name: win6
         tgt_name: win6gt
       win9:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,18.01555171]
+          weight: [0.0555076,1.]
         pred_name: win9
         tgt_name: win9gt
       win12:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,14.68179636]
+          weight: [0.06811156,1.]
         pred_name: win12
         tgt_name: win12gt
       win21:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,11.0052653]
+          weight: [0.0908656,1.]
         pred_name: win21
         tgt_name: win21gt
       win33:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,9.89231081]
+          weight: [0.10108862,1.]
         pred_name: win33
         tgt_name: win33gt
       win42:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,9.5789914]
+          weight: [0.10439512,1.]
         pred_name: win42
         tgt_name: win42gt
       win54:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,9.26058395]
+          weight: [0.10798455, 1.]
         pred_name: win54
         tgt_name: win54gt
       win66:
         comp: torch.nn.CrossEntropyLoss
         args:
-          weight: [1.,9.55396437]
+          weight: [0.10466859, 1.]
         pred_name: win66
         tgt_name: win66gt
 
