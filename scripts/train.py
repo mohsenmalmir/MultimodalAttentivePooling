@@ -84,8 +84,10 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
                 # print(data["win33gt"].shape)
                 idx = np.where(gt != -100)
                 print(confusion_matrix(gt[idx], pred[idx]))
-                print(data["sttgt_maxpooled"].tolist(),torch.argmax(data["start_maxpooled"],dim=1).tolist())
-                print(data["endtgt_maxpooled"].tolist(),torch.argmax(data["end_maxpooled"],dim=1).tolist())
+                print(data["sttgt_maxpooled"].tolist())
+                print(torch.argmax(data["start_maxpooled"],dim=1).tolist())
+                print(data["endtgt_maxpooled"].tolist())
+                print(torch.argmax(data["end_maxpooled"],dim=1).tolist())
 
 
 
