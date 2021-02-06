@@ -32,13 +32,14 @@ class ModulatedChunks(Module):
         # self.seq_enc2 = Linear(q_dim, vis_dim)
         # self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
         self.pred = dict()
-        for name in out_names:
-            self.pred[name] = Sequential(Linear(vis_dim, vis_dim), # use vis_dim if classifying only chunks, vis_dim*num_chunks for classifying windows
+        for jj,name in enumerate(out_names):
+            self.pred[name] = Sequential(Linear(self.num_chunks[jj]*vis_dim, vis_dim), # use vis_dim if classifying only chunks, vis_dim*num_chunks for classifying windows
                                          ReLU(),
                                          Dropout(),
                                          Linear(vis_dim, 2)
                                          )
         self.pred = ModuleDict(self.pred)
+        self.vis_dim, self.q_dim = vis_dim, q_dim
         # map maxpooled sequence, each of size vis_dim to maxpooled vector
         self.start_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
         self.end_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
@@ -136,6 +137,9 @@ class ModulatedChunks(Module):
             # x2 = np.asarray([enc2_weights[0,0,lbls[0,0,0,ll],ll].item() for ll in range(C)])
             # print((x1==x2).sum())
             modulated = modulated * pooled
+            # print(B,NW,self.vis_dim * self.num_chunks[jj])
+            modulated2 = modulated.view(B,NW,self.vis_dim * self.num_chunks[jj])
+            # print(modulated2.shape)
             # window classification
             # modulated = modulated.view(B,NW,-1)
             # data[self.out_names[jj]] = self.pred[jj](modulated).transpose(1,2)
@@ -148,7 +152,8 @@ class ModulatedChunks(Module):
             # data[self.out_names[jj]] = self.pred(modulated)
             # this is to make sure the output directly works with BCEloss, e.g. B N_Classes D1 D2 ...
             # chunk classification
-            data[self.out_names[jj]] = self.pred[self.out_names[jj]](modulated).transpose(2,3).transpose(1,2)
+            # data[self.out_names[jj]] = self.pred[self.out_names[jj]](modulated).transpose(2,3).transpose(1,2)
+            data[self.out_names[jj]] = self.pred[self.out_names[jj]](modulated2).transpose(1,2)
             if jj==0:
                 _, _, _, D = modulated.shape
                 # modulated has shape B NW NC CS

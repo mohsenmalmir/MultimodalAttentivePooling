@@ -59,14 +59,19 @@ class ChunkIoU:
             # fix for padding
             starts = torch.minimum(starts, torch.tensor(1.))
             ends = torch.minimum(ends, torch.tensor(1.))
-            lens = ends - starts
-            lens = torch.where(lens>0,lens,torch.tensor(-1.))
+            starts = torch.min(starts,dim=-1)[0] # for window prediction
+            ends = torch.max(ends,dim=-1)[0]
+            # print(starts.shape,ends.shape)
+            # lens = ends - starts
+            # lens = torch.where(lens>0,lens,torch.tensor(-1.))
             # ground truth intervals
             gt_starts = [d[0]/l for d,l in zip(data[self.ts_name],data[self.dur_name])]
-            gt_starts = torch.tensor(gt_starts).unsqueeze(1).unsqueeze(2).repeat(1,NW,self.num_chunks[jj])
+            # gt_starts = torch.tensor(gt_starts).unsqueeze(1).unsqueeze(2).repeat(1,NW,self.num_chunks[jj]) # for chunk prediction
+            gt_starts = torch.tensor(gt_starts).unsqueeze(1).repeat(1,NW) # for window prediction
             gt_ends = [d[1]/l for d,l in zip(data[self.ts_name],data[self.dur_name])]
-            gt_ends = torch.tensor(gt_ends).unsqueeze(1).unsqueeze(2).repeat(1,NW,self.num_chunks[jj])
-            gt_lens = gt_ends - gt_starts
+            # gt_ends = torch.tensor(gt_ends).unsqueeze(1).unsqueeze(2).repeat(1,NW,self.num_chunks[jj])
+            gt_ends = torch.tensor(gt_ends).unsqueeze(1).repeat(1,NW)
+            # gt_lens = gt_ends - gt_starts
             # calculate iou
             intersection = torch.minimum(gt_ends, ends) - torch.maximum(gt_starts, starts)
             union = torch.maximum(ends, gt_ends) - torch.minimum(starts, gt_starts)
@@ -74,6 +79,7 @@ class ChunkIoU:
             tgt = torch.where(iou>=self.iou_threshold,torch.tensor(1.),torch.tensor(0.))
             # make sure tgt in padded areas is 0
             tgt = torch.where(starts<1,tgt,torch.tensor(-100.))
+            # print(tgt.shape)
             # save to output
             data[self.out_names[jj]] = tgt.long()
         return data
