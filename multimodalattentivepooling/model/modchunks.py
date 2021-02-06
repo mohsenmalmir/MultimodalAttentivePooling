@@ -1,4 +1,4 @@
-from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU,ModuleList,ModuleDict
+from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU,ModuleList,ModuleDict,Sequential,Dropout
 import torch.nn.functional as F
 from multimodalattentivepooling.model.encoder import SeqEncoder
 from multimodalattentivepooling.model.sequtils import PositionalEncoding
@@ -33,7 +33,11 @@ class ModulatedChunks(Module):
         # self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
         self.pred = dict()
         for name in out_names:
-            self.pred[name] = Linear(vis_dim, 2) # use vis_dim if classifying only chunks, vis_dim*num_chunks for classifying windows
+            self.pred[name] = Sequential(Linear(vis_dim, vis_dim), # use vis_dim if classifying only chunks, vis_dim*num_chunks for classifying windows
+                                         ReLU(),
+                                         Dropout(),
+                                         Linear(vis_dim, 2)
+                                         )
         self.pred = ModuleDict(self.pred)
         # map maxpooled sequence, each of size vis_dim to maxpooled vector
         self.start_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
