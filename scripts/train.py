@@ -63,6 +63,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     loss.to(device)
     for epoch in range(train_args["nepochs"]):
         for epoch_index, data in enumerate(dataloader):
+            print(epoch_index)
             optimizer.zero_grad()
             # pass data through transforms
             data = transforms(data)

@@ -1,4 +1,4 @@
-from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU
+from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU,ModuleList,ModuleDict
 import torch.nn.functional as F
 from multimodalattentivepooling.model.encoder import SeqEncoder
 from multimodalattentivepooling.model.sequtils import PositionalEncoding
@@ -31,7 +31,10 @@ class ModulatedChunks(Module):
         # self.seq_enc1 = Linear(q_dim, vis_dim)
         # self.seq_enc2 = Linear(q_dim, vis_dim)
         # self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim)
-        self.pred = Linear(vis_dim, 2)
+        self.pred = dict()
+        for name in out_names:
+            self.pred[name] = Linear(vis_dim, 2) # use vis_dim if classifying only chunks, vis_dim*num_chunks for classifying windows
+        self.pred = ModuleDict(self.pred)
         # map maxpooled sequence, each of size vis_dim to maxpooled vector
         self.start_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
         self.end_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
@@ -84,15 +87,15 @@ class ModulatedChunks(Module):
         clip_word_sim_np = clip_word_sim_np / clip_word_sim_np_sum
         B, NUMC, NUMQ = clip_word_sim_np.shape
         # print("word-clip sim:",clip_word_sim.shape)
-        # clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
+        clip_labels = torch.argmax(clip_word_sim, dim=2,keepdims=True).unsqueeze(1).float() # Bx1xNCx1
         # print("clip labels:",clip_labels.shape)
         # transpose C to dim=1 to apply unfold
         vis_feats = vis_feats.transpose(1, 2).unsqueeze(3)# convert to [B, C, NC, 1)
         # print("vis_feats before unfold:",vis_feats.shape)
         # unfold visual feats
         for jj in range(len(self.window_sizes)):
-            clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
-            clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
+            # clip_labels = [[np.random.choice(NUMQ,p=clip_word_sim_np[bb,kk,:]) for kk in range(NUMC)] for bb in range(B)]
+            # clip_labels = torch.tensor(clip_labels).unsqueeze(1).unsqueeze(3).float()
             ks = (self.window_sizes[jj], 1)
             st, pd, dl = (1, 1), (0, 0), (1, 1)
             vis_feats_unfolded = F.unfold(vis_feats, ks, dl, pd, st)
@@ -129,13 +132,19 @@ class ModulatedChunks(Module):
             # x2 = np.asarray([enc2_weights[0,0,lbls[0,0,0,ll],ll].item() for ll in range(C)])
             # print((x1==x2).sum())
             modulated = modulated * pooled
+            # window classification
+            # modulated = modulated.view(B,NW,-1)
+            # data[self.out_names[jj]] = self.pred[jj](modulated).transpose(1,2)
+            # print(data[self.out_names[jj]].shape)
+            # print(modulated.shape)
             # print(modulated)
             # modulated = pooled
             # print("output shape:",modulated.shape)
             # data["pred"] = self.pred(modulated).squeeze(-1)
             # data[self.out_names[jj]] = self.pred(modulated)
             # this is to make sure the output directly works with BCEloss, e.g. B N_Classes D1 D2 ...
-            data[self.out_names[jj]] = self.pred(modulated).transpose(2,3).transpose(1,2)
+            # chunk classification
+            data[self.out_names[jj]] = self.pred[self.out_names[jj]](modulated).transpose(2,3).transpose(1,2)
             if jj==0:
                 _, _, _, D = modulated.shape
                 # modulated has shape B NW NC CS
