@@ -1,0 +1,21 @@
+order: [ChunkIoU,MaxPooledStartEnd]
+ChunkIoU:
+  comp: multimodalattentivepooling.transform.slidingwindow.ChunkIoU
+  args:
+    window_sizes: [3,21,54]
+    num_chunks: [3,3,3]
+    iou: 0.3
+    in_name: vis_feats
+    len_name: vis_len
+    dur_name: duration
+    ts_name: ts
+    out_names: [win3gt,win21gt,win54gt]
+MaxPooledStartEnd:
+  comp: multimodalattentivepooling.transform.startend.MaxPooledStartEnd
+  args:
+    maxpool_size: 50
+    len_name: vis_len
+    dur_name: duration
+    ts_name: ts
+    start_outname: sttgt_maxpooled
+    end_outname: endtgt_maxpooled

@@ -164,5 +164,5 @@ class ModulatedChunks(Module):
                 max_pooled = max_pooled.view(B, -1)
                 data[self.stpred_name] = self.start_pred(max_pooled).unsqueeze(2)
                 data[self.endpred_name] = self.end_pred(max_pooled).unsqueeze(2)
-                break
+                # break
         return data

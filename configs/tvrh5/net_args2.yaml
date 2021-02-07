@@ -1,0 +1,9 @@
+window_sizes: [3,21,54]
+num_chunks: [3,3,3]
+out_names: [win3,win21,win54]
+vis_dim: 1024
+q_dim: 768
+len_name: vis_len
+stend_mxpoolsz: 50
+stpred_name: start_maxpooled
+endpred_name: end_maxpooled
