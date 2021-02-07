@@ -77,13 +77,13 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             # misclassification
             if epoch_index%500==0:
                 print(epoch, epoch_index,data["loss"].item())
-                pred = data["win33"]
+                # pred = data["win33"]
                 # print(pred.shape)
-                pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
-                gt = data["win33gt"].data.cpu().numpy().reshape(-1)
+                # pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
+                # gt = data["win33gt"].data.cpu().numpy().reshape(-1)
                 # print(data["win33gt"].shape)
-                idx = np.where(gt != -100)
-                print(confusion_matrix(gt[idx], pred[idx]))
+                # idx = np.where(gt != -100)
+                # print(confusion_matrix(gt[idx], pred[idx]))
                 print(data["sttgt_maxpooled"].tolist())
                 print(torch.argmax(data["start_maxpooled"],dim=1).tolist())
                 print(data["endtgt_maxpooled"].tolist())
