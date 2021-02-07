@@ -1,4 +1,4 @@
 nepochs: 10
 device:
   name: cpu
-  data: [win3gt,win21gt,win54gt,vis_feats,query_feats]
+  data: [win3gt,win21gt,win55gt,vis_feats,query_feats]

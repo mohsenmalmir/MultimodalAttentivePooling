@@ -55,5 +55,5 @@ SegmentLoss:
         comp: torch.nn.CrossEntropyLoss
         args:
           weight: [0.10798455, 1.]
-        pred_name: win54
-        tgt_name: win54gt
+        pred_name: win55
+        tgt_name: win55gt
