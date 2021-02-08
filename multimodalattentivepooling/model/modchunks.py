@@ -1,4 +1,4 @@
-from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU,ModuleList,ModuleDict,Sequential,Dropout
+from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU,ModuleList,ModuleDict,Sequential,Dropout,MultiheadAttention
 import torch.nn.functional as F
 from multimodalattentivepooling.model.encoder import SeqEncoder
 from multimodalattentivepooling.model.sequtils import PositionalEncoding
@@ -51,6 +51,8 @@ class ModulatedChunks(Module):
         self.endpred_name = endpred_name
         # internal counter
         self.iter_counter = 0
+        # combine
+        self.modulate = MultiheadAttention(1024, 4)
 
     def to(self, device):
         self.device = device
@@ -59,6 +61,7 @@ class ModulatedChunks(Module):
     def forward(self,data: dict):
         self.iter_counter += 1 # used for softmax
         temperature = max(1.,-self.iter_counter+25000.) # this will go to 1 at iter counter=25000
+        # print(self.iter_counter,temperature)
         # video: expected shape of BTC
         vis_feats = data["vis_feats"] # B T C
         vis_feats = self.vid_pe(vis_feats) # positional signal included in the features
@@ -88,11 +91,11 @@ class ModulatedChunks(Module):
         # print(clip_word_sim)
         # this is modified on Feb 04 to make the word assignment probabilistic
         clip_word_sim_np = clip_word_sim.data.cpu().numpy()
-        clip_word_sim_np = np.exp(clip_word_sim_np/temperature)
+        # clip_word_sim_np = np.exp(clip_word_sim_np/temperature)
         clip_word_sim_np = clip_word_sim_np - np.min(clip_word_sim_np,axis=2,keepdims=True)
-        # clip_word_sim_np[np.where(clip_word_sim_np==0)] = epsilon
+        clip_word_sim_np[np.where(clip_word_sim_np==0)] = epsilon
         clip_word_sim_np_sum = np.sum(clip_word_sim_np,axis=2,keepdims=True)
-        # clip_word_sim_np_sum[np.where(clip_word_sim_np_sum==0)] = 1.
+        clip_word_sim_np_sum[np.where(clip_word_sim_np_sum==0)] = 1.
         clip_word_sim_np = clip_word_sim_np / clip_word_sim_np_sum
         B, NUMC, NUMQ = clip_word_sim_np.shape
         # print("word-clip sim:",clip_word_sim.shape)
@@ -140,7 +143,11 @@ class ModulatedChunks(Module):
             # x1 = modulated[0,0,0,:].data.cpu().numpy()
             # x2 = np.asarray([enc2_weights[0,0,lbls[0,0,0,ll],ll].item() for ll in range(C)])
             # print((x1==x2).sum())
-            modulated = modulated * pooled
+            pooled = pooled.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
+            modulated = modulated.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
+            modulated, _ = self.modulate(pooled,modulated,pooled)
+            modulated = modulated.transpose(0,1).contiguous().view(B,NW,self.num_chunks[jj],self.vis_dim)
+            # modulated = modulated * pooled # B NW NC C
             # print(B,NW,self.vis_dim * self.num_chunks[jj])
             modulated2 = modulated.view(B,NW,self.vis_dim * self.num_chunks[jj])
             # print(modulated2.shape)
