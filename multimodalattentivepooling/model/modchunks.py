@@ -145,7 +145,10 @@ class ModulatedChunks(Module):
             # print((x1==x2).sum())
             pooled = pooled.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
             modulated = modulated.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
-            modulated, _ = self.modulate(pooled,modulated,pooled)
+            modulated, _ = self.modulate(modulated,pooled,pooled)
+            # print(pooled.shape,enc2.shape)
+            # modulated, _ = self.modulate(pooled,enc2.transpose(0,1),pooled)
+            # print(modulated.shape)
             modulated = modulated.transpose(0,1).contiguous().view(B,NW,self.num_chunks[jj],self.vis_dim)
             # modulated = modulated * pooled # B NW NC C
             # print(B,NW,self.vis_dim * self.num_chunks[jj])
