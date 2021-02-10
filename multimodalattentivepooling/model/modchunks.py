@@ -52,7 +52,7 @@ class ModulatedChunks(Module):
         # internal counter
         self.iter_counter = 0
         # combine
-        self.modulate = MultiheadAttention(1024, 4)
+        # self.modulate = MultiheadAttention(1024, 4)
 
     def to(self, device):
         self.device = device
@@ -143,14 +143,14 @@ class ModulatedChunks(Module):
             # x1 = modulated[0,0,0,:].data.cpu().numpy()
             # x2 = np.asarray([enc2_weights[0,0,lbls[0,0,0,ll],ll].item() for ll in range(C)])
             # print((x1==x2).sum())
-            pooled = pooled.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
-            modulated = modulated.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
-            modulated, _ = self.modulate(modulated,pooled,pooled)
+            # pooled = pooled.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
+            # modulated = modulated.view(B,NW*self.num_chunks[jj],self.vis_dim).transpose(0,1)
+            # modulated, _ = self.modulate(modulated,pooled,pooled)
             # print(pooled.shape,enc2.shape)
             # modulated, _ = self.modulate(pooled,enc2.transpose(0,1),pooled)
             # print(modulated.shape)
-            modulated = modulated.transpose(0,1).contiguous().view(B,NW,self.num_chunks[jj],self.vis_dim)
-            # modulated = modulated * pooled # B NW NC C
+            # modulated = modulated.transpose(0,1).contiguous().view(B,NW,self.num_chunks[jj],self.vis_dim)
+            modulated = modulated * pooled # B NW NC C
             # print(B,NW,self.vis_dim * self.num_chunks[jj])
             modulated2 = modulated.view(B,NW,self.vis_dim * self.num_chunks[jj])
             # print(modulated2.shape)
