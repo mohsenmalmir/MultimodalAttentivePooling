@@ -60,14 +60,14 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     # training loop
     device = torch.device(train_args["device"]["name"])
     net.to(device)
-    net.eval()
+    # net.eval()
     if "ckpt" in train_args.keys():
         print("loading from checkpoint:",device)
         net.load_state_dict(torch.load(train_args["ckpt"], map_location=device))
     loss.to(device)
     for epoch in range(train_args["nepochs"]):
         for epoch_index, data in enumerate(dataloader):
-            # optimizer.zero_grad()
+            optimizer.zero_grad()
             # pass data through transforms
             data = transforms(data)
             for n in train_args["device"]["data"]:
@@ -76,8 +76,8 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             data = net(data)
             # calculate loss, backpropagate, step
             data = loss(data)
-            # data["loss"].backward()
-            # optimizer.step()
+            data["loss"].backward()
+            optimizer.step()
             # misclassification
             if epoch_index%5==0:
                 print(epoch, epoch_index,data["loss"].item())
