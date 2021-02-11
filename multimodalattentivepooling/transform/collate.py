@@ -28,4 +28,8 @@ class CollateTVRH5:
                 "ts":[d["ts"] for d in data],
                 "duration":[d["duration"] for d in data],
                 "vis_len":vis_len,
-                "query_len":query_len}
+                "query_len":query_len,
+                "desc":[d["desc"] for d in data],
+                "vid_name": [d["vid_name"] for d in data],
+                "desc_id": [d["desc_id"] for d in data],
+                }

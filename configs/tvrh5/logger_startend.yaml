@@ -1,0 +1,4 @@
+start_name: start_maxpooled
+end_name: end_maxpooled
+duration: duration
+output: /Users/mohsenmalmir/tvrh5_out.json

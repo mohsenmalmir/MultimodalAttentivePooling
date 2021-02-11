@@ -51,7 +51,9 @@ class TVRH5(Dataset):
                 "vis_feats": np.array(self.vis_feats[m["vid_name"]]),
                 "query_feats": np.array(self.query_feats[str(m["desc_id"])]),
                 "ts": m["ts"],
-                # "query_text":m["desc"],
-                "duration":m["duration"]
+                "desc":m["desc"],
+                "duration":m["duration"],
+                "vid_name": m["vid_name"],
+                "desc_id": m["desc_id"],
                 }
         return data
