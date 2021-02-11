@@ -21,6 +21,14 @@ class TVRH5(Dataset):
             self.moments = [json.loads(l) for l in f]
         self.vis_feats = h5py.File(feats_h5file,"r")
         self.query_feats = h5py.File(query_h5file,"r")
+        print("preloading...")
+        # self.vis_feats_np = dict()
+        # self.query_feats_np = dict()
+        # for ii,k in enumerate(self.moments):
+        #     if ii%1000==0:
+        #         print(ii)
+        #     self.vis_feats_np[k["vid_name"]] = np.array(self.vis_feats[k["vid_name"]]).shape
+        #     self.query_feats_np[str(k["desc_id"])] = np.array(self.query_feats[str(k["desc_id"])])
 
     def __len__(self):
         """
