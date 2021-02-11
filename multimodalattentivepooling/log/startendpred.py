@@ -56,7 +56,7 @@ class TVRH5StartEnd:
             next_pred = {
                          "desc_id":data["desc_id"][b],
                          "desc":data["desc"][b],
-                         "predictions":[self.video2idx[vid_name],min(st,en),max(st,en),1.0]
+                         "predictions":[[self.video2idx[vid_name],min(st,en),max(st,en),1.0]]
                         }
             # print(next_pred)
             self.pred.append(next_pred)
