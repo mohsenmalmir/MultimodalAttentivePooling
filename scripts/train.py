@@ -1,9 +1,11 @@
 import argparse
 from pathlib import Path
 import numpy as np
-import torch
 from sklearn.metrics import confusion_matrix
 from multimodalattentivepooling.utils.moduleload import load_comp, load_args
+import torch
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
+
 
 def create_parse():
     parser = argparse.ArgumentParser(description='Prepare TVR dataset.')
@@ -54,6 +56,8 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     print("created network with {0} parameters".format(sum([np.prod(p.shape) for p in net.parameters() if p.requires_grad])))
     optimizer, optimizer_args = load_comp(optimizer), load_args(optimizer_args)
     optimizer = optimizer(net.parameters(),**optimizer_args)
+    # scheduler
+    scheduler = CosineAnnealingWarmRestarts(optimizer, 5000)
     loss, loss_args = load_comp(loss), load_args(loss_args)
     loss = loss(**loss_args)
     train_args = load_args(train_args)
@@ -78,8 +82,9 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             data = loss(data)
             data["loss"].backward()
             optimizer.step()
+            scheduler.step(epoch + epoch_index / len(dataloader))
             # misclassification
-            if epoch_index%500==0:
+            if epoch_index%5==0:
                 print(epoch, epoch_index,data["loss"].item())
                 pred = data["win21"]
                 # print(pred.shape)
