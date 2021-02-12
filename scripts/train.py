@@ -97,7 +97,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
                 print(torch.argmax(data["start_maxpooled"],dim=1).tolist())
                 print(data["endtgt_maxpooled"].tolist())
                 print(torch.argmax(data["end_maxpooled"],dim=1).tolist())
-        torch.save(net.state_dict(), "modchunks.ckpt")
+        torch.save(net.state_dict(), "/content/drive/MyDrive/modchunks.ckpt")
 
 
 
