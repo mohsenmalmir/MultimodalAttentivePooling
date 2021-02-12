@@ -78,8 +78,11 @@ class ModulatedChunks(Module):
         beliefs_unfolded = [F.unfold(clip_word_sim.transpose(1,2).unsqueeze(3), (ws, 1), dl, pd, st).view(B, NUMWORDS, ws, -1).transpose(1,3) for ws in self.window_sizes]
         beliefs_unfolded = [b.view(b.shape[0],b.shape[1],self.num_chunks[jj],self.window_sizes[jj]//self.num_chunks[jj],b.shape[3]) for jj,b in enumerate(beliefs_unfolded)]
         chunk_labels = [torch.argmax(torch.sum(b,dim=3),dim=3) for b in beliefs_unfolded]
-        sel_words = [[[enc2[b,chunk_labels[ii][b,w,:],:].unsqueeze(0).unsqueeze(0) for w in range(chunk_labels[ii].shape[1])] for b in range(B)] for ii in range(len(chunk_labels))]
-        sel_words = [torch.cat([torch.cat(b,dim=1) for b in a],dim=0) for a in sel_words]
+        # print([l.shape for l in chunk_labels])
+        # print(enc2.shape)
+        sel_words = [torch.gather(enc2.unsqueeze(1).repeat(1,l.shape[1],1,1),2,l.unsqueeze(3).repeat(1,1,1,self.vis_dim)) for l in chunk_labels]
+        # sel_words = [[[enc2[b,chunk_labels[ii][b,w,:],:].unsqueeze(0).unsqueeze(0) for w in range(chunk_labels[ii].shape[1])] for b in range(B)] for ii in range(len(chunk_labels))]
+        # sel_words = [torch.cat([torch.cat(b,dim=1) for b in a],dim=0) for a in sel_words]
         # print([[[c.shape for c in b]for b in a] for a in sel_words])
         modulated = [(sw*vu).view(B,vu.shape[1],-1) for sw,vu in zip(sel_words, vis_unfolded)]
         for jj,m in enumerate(modulated):
