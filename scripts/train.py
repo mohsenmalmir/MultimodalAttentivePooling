@@ -84,7 +84,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             optimizer.step()
             scheduler.step(epoch + epoch_index / len(dataloader))
             # misclassification
-            if epoch_index%5==0:
+            if epoch_index%500==0:
                 print(epoch, epoch_index,data["loss"].item())
                 pred = data["win21"]
                 # print(pred.shape)
