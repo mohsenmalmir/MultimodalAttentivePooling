@@ -75,12 +75,12 @@ class ModulatedChunks(Module):
         vis_unfolded = [F.unfold(vis_feats, (ws, 1), dl, pd, st).view(B, C, ws, -1).transpose(1,3) for ws in self.window_sizes]
         vis_unfolded = [v.view(B,v.shape[1],self.num_chunks[jj],-1,C) for jj,v in enumerate(vis_unfolded)]
         vis_unfolded = [F.adaptive_avg_pool3d(v, (self.num_chunks[jj],1,C)).squeeze(3) for jj,v in enumerate(vis_unfolded)]
-        clipidx_unfolded = [F.unfold(clip_index, (ws, 1), dl, pd, st).view(B, 1, ws, -1).transpose(1,3).repeat(1,1,1,NUMWORDS)
-                            for ws in self.window_sizes]
-        sim_unfolded = [torch.gather(clip_word_sim.unsqueeze(1).repeat(1,idx.shape[1],1,1),2,idx.long()) for idx in clipidx_unfolded]
-        clip_labels = [torch.argmax(s,dim=3,keepdim=False).view(B,s.shape[1],self.num_chunks[jj],-1) for jj,s in enumerate(sim_unfolded)]
-        clip_labels = [torch.gather(cl,3,torch.randint(low=0,high=cl.shape[-1],size=cl.shape[:3]+(1,))) for cl in clip_labels]
-        sel_words = [torch.gather(enc2.unsqueeze(1).repeat(1,cl.shape[1],1,1),2,cl.repeat(1,1,1,self.vis_dim)) for cl in clip_labels]
+        beliefs_unfolded = [F.unfold(clip_word_sim.transpose(1,2).unsqueeze(3), (ws, 1), dl, pd, st).view(B, NUMWORDS, ws, -1).transpose(1,3) for ws in self.window_sizes]
+        beliefs_unfolded = [b.view(b.shape[0],b.shape[1],self.num_chunks[jj],self.window_sizes[jj]//self.num_chunks[jj],b.shape[3]) for jj,b in enumerate(beliefs_unfolded)]
+        chunk_labels = [torch.argmax(torch.sum(b,dim=3),dim=3) for b in beliefs_unfolded]
+        sel_words = [[[enc2[b,chunk_labels[ii][b,w,:],:].unsqueeze(0).unsqueeze(0) for w in range(chunk_labels[ii].shape[1])] for b in range(B)] for ii in range(len(chunk_labels))]
+        sel_words = [torch.cat([torch.cat(b,dim=1) for b in a],dim=0) for a in sel_words]
+        # print([[[c.shape for c in b]for b in a] for a in sel_words])
         modulated = [(sw*vu).view(B,vu.shape[1],-1) for sw,vu in zip(sel_words, vis_unfolded)]
         for jj,m in enumerate(modulated):
             data[self.out_names[jj]] = self.pred[self.out_names[jj]](m).transpose(1,2)
@@ -91,5 +91,4 @@ class ModulatedChunks(Module):
         max_pooled = max_pooled.view(B, -1)
         data[self.stpred_name] = self.start_pred(max_pooled).unsqueeze(2)
         data[self.endpred_name] = self.end_pred(max_pooled).unsqueeze(2)
-        # break
         return data
