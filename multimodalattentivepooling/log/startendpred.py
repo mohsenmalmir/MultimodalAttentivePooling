@@ -56,7 +56,7 @@ class TVRH5StartEnd:
             all_preds = [ [self.video2idx[vid_name],
                            min(sts[ii],ens[ii]),
                            max(sts[ii],ens[ii]),
-                            1.0] for ii in range(NS)]
+                            1.0] for ii in range(1)]
             next_pred = {
                          "desc_id":data["desc_id"][b],
                          "desc":data["desc"][b],
