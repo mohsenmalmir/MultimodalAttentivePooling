@@ -19,7 +19,9 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         # make it to TBC
         # x = x.transpose(0,1)
-        x = x + self.pe[x.size(0), :, :]
+        # x = x + self.pe[x.size(0), :, :]
+        x = x + self.pe[:, :x.size(0), :]
+
         # back to BTC
         # x = x.transpose(0,1)
         return x
