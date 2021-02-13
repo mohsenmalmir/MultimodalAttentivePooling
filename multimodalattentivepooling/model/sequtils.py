@@ -20,7 +20,7 @@ class PositionalEncoding(nn.Module):
         # make it to TBC
         # x = x.transpose(0,1)
         # x = x + self.pe[x.size(0), :, :]
-        x = x + self.pe[:, :x.size(0), :]
+        x = x + self.pe[:, :x.size(1), :]
 
         # back to BTC
         # x = x.transpose(0,1)
