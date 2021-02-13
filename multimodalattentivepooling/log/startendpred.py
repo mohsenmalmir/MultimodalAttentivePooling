@@ -51,17 +51,19 @@ class TVRH5StartEnd:
             if vid_name not in self.video2idx.keys():
                 self.video2idx[vid_name] = self.vid_index
                 self.vid_index = self.vid_index + 1
-            all_preds = []
-            for ii in range(NS):
-                st = starts[b,ii,0].item() / NS * data[self.duration][b]
-                en = ends[b,ii,0].item() / NE * data[self.duration][b]
-                all_preds.append([self.video2idx[vid_name],min(st,en),max(st,en),1.0])
+            sts = starts[b,:,0].numpy() / NS * data[self.duration][b]
+            ens = (1+ends[b,:,0].numpy()) / NE * data[self.duration][b] # inclusive ends
+            all_preds = [ [self.video2idx[vid_name],
+                           min(sts[ii],ens[ii]),
+                           max(sts[ii],ens[ii]),
+                            1.0] for ii in range(1)]
             next_pred = {
                          "desc_id":data["desc_id"][b],
                          "desc":data["desc"][b],
                          "predictions":all_preds
                         }
             self.pred.append(next_pred)
+            print(next_pred["predictions"])
 
     def wrap_up(self):
         """

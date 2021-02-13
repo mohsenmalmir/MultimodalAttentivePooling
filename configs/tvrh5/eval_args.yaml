@@ -1,4 +1,4 @@
 device:
   name: cpu
   data: [win3gt,win21gt,win55gt,vis_feats,query_feats]
-ckpt: /Users/mohsenmalmir/Code/Vision/MultimodalAttentivePooling/modchunks.ckpt
+ckpt: /Users/mohsenmalmir/modchunks.ckpt
