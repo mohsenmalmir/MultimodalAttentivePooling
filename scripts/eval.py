@@ -67,11 +67,11 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
         # log
         logger(data)
         print(epoch_index)
-        print(data["sttgt_maxpooled"].tolist())
-        print(torch.argmax(data["start_maxpooled"],dim=1).tolist())
-        print(data["endtgt_maxpooled"].tolist())
-        print(torch.argmax(data["end_maxpooled"],dim=1).tolist())
-        print(data["ts"])
+        # print(data["sttgt_maxpooled"].tolist())
+        # print(torch.argmax(data["start_maxpooled"],dim=1).tolist())
+        # print(data["endtgt_maxpooled"].tolist())
+        # print(torch.argmax(data["end_maxpooled"],dim=1).tolist())
+        # print(data["ts"])
 
     logger.wrap_up()
 

@@ -63,7 +63,7 @@ class TVRH5StartEnd:
                          "predictions":all_preds
                         }
             self.pred.append(next_pred)
-            print(next_pred["predictions"])
+            # print(next_pred["predictions"])
 
     def wrap_up(self):
         """
