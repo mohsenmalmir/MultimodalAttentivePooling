@@ -51,8 +51,8 @@ class TVRH5StartEnd:
             if vid_name not in self.video2idx.keys():
                 self.video2idx[vid_name] = self.vid_index
                 self.vid_index = self.vid_index + 1
-            sts = starts[b,:,0].numpy() / NS * data[self.duration][b]
-            ens = (1+ends[b,:,0].numpy()) / NE * data[self.duration][b] # inclusive ends
+            sts = starts[b,:,0].data.cpu().numpy() / NS * data[self.duration][b]
+            ens = (1+ends[b,:,0].data.cpu().numpy()) / NE * data[self.duration][b] # inclusive ends
             all_preds = [ [self.video2idx[vid_name],
                            min(sts[ii],ens[ii]),
                            max(sts[ii],ens[ii]),
