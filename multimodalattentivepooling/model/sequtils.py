@@ -4,7 +4,7 @@ from torch import nn
 
 class PositionalEncoding(nn.Module):
 
-    def __init__(self, d_model, max_len=256):
+    def __init__(self, d_model, max_len=512):
         super(PositionalEncoding, self).__init__()
         # self.dropout = nn.Dropout(p=dropout)
 
