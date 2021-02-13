@@ -44,21 +44,24 @@ class TVRH5StartEnd:
         """
         NS = data[self.start_name].shape[1]
         NE = data[self.end_name].shape[1]
-        starts = torch.argmax(data[self.start_name],dim=1)
-        ends = torch.argmax(data[self.end_name],dim=1)
+        starts = torch.argsort(data[self.start_name],dim=1,descending=True)
+        ends = torch.argsort(data[self.end_name],dim=1,descending=True)
         for b in range(starts.shape[0]):
             vid_name = data["vid_name"][b]
             if vid_name not in self.video2idx.keys():
                 self.video2idx[vid_name] = self.vid_index
                 self.vid_index = self.vid_index + 1
-            st = starts[b,0].item() / NS * data[self.duration][b]
-            en = ends[b,0].item() / NE * data[self.duration][b]
+            all_preds = []
+            for ii in range(NS):
+                st = starts[b,ii,0].item() / NS * data[self.duration][b]
+                en = ends[b,ii,0].item() / NE * data[self.duration][b]
+                all_preds.append([self.video2idx[vid_name],min(st,en),max(st,en),1.0])
             next_pred = {
                          "desc_id":data["desc_id"][b],
                          "desc":data["desc"][b],
-                         "predictions":[[self.video2idx[vid_name],min(st,en),max(st,en),1.0]]
+                         "predictions":all_preds
                         }
-            # print(next_pred)
+            print(next_pred)
             self.pred.append(next_pred)
 
     def wrap_up(self):
