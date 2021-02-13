@@ -61,7 +61,6 @@ class TVRH5StartEnd:
                          "desc":data["desc"][b],
                          "predictions":all_preds
                         }
-            print(next_pred)
             self.pred.append(next_pred)
 
     def wrap_up(self):
