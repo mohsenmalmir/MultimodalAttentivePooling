@@ -54,9 +54,9 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     # training loop
     device = torch.device(eval_args["device"]["name"])
     net.to(device)
-    net.eval()
     print("loading from checkpoint:",device)
     net.load_state_dict(torch.load(eval_args["ckpt"], map_location=device))
+    net.eval()
     for epoch_index, data in enumerate(dataloader):
         # pass data through transforms
         data = transforms(data)
