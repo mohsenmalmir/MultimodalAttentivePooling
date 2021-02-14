@@ -15,7 +15,7 @@ class ModulatedChunks(Module):
     num_chunks: int
     seq_enc1: SeqEncoder
     seq_enc2: SeqEncoder
-    def __init__(self, window_sizes, num_chunks, vis_dim, q_dim, len_name, stend_mxpoolsz, out_names,
+    def __init__(self, window_sizes, num_chunks, vis_dim, q_dim, model_dim, len_name, stend_mxpoolsz, out_names,
                  stpred_name, endpred_name):
         super(ModulatedChunks, self).__init__()
         # positional encodings of the sequences
@@ -36,10 +36,11 @@ class ModulatedChunks(Module):
                                          Linear(vis_dim, 2)
                                          )
         self.pred = ModuleDict(self.pred)
-        self.vis_dim, self.q_dim = vis_dim, q_dim
+        self.vis_dim, self.q_dim, self.model_dim = vis_dim, q_dim, model_dim
         # map maxpooled sequence, each of size vis_dim to maxpooled vector
-        self.start_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
-        self.end_pred = Linear(vis_dim*stend_mxpoolsz,stend_mxpoolsz)
+        self.model_proj = Linear(vis_dim, model_dim)
+        self.start_pred = Linear(model_dim*stend_mxpoolsz,stend_mxpoolsz)
+        self.end_pred = Linear(model_dim*stend_mxpoolsz,stend_mxpoolsz)
         self.device = None
         self.len_name = len_name
         self.out_names = out_names
@@ -88,7 +89,8 @@ class ModulatedChunks(Module):
         for jj,m in enumerate(modulated):
             data[self.out_names[jj]] = self.pred[self.out_names[jj]](m).transpose(1,2)
         modulated = modulated[0].view(B,modulated[0].shape[1],self.num_chunks[0],self.vis_dim)
-        modulated = [modulated[bb,:l,:,:].view(-1,self.vis_dim).unsqueeze(0).transpose(1,2) for bb,l in zip(range(B),data[self.len_name])]
+        modulated = self.model_proj(modulated)
+        modulated = [modulated[bb,:l,:,:].view(-1,self.model_dim).unsqueeze(0).transpose(1,2) for bb,l in zip(range(B),data[self.len_name])]
         # max-pool
         max_pooled = torch.cat([self.maxpool_startend(m) for m in modulated],dim=0)
         max_pooled = max_pooled.view(B, -1)

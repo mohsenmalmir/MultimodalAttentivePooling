@@ -1,8 +1,9 @@
-window_sizes: [3,21,55]
-num_chunks: [3,7,11]
-out_names: [win3,win21,win55]
+window_sizes: [3]
+num_chunks: [3]
+out_names: [win3]
 vis_dim: 1024
 q_dim: 768
+model_dim: 128
 len_name: vis_len
 stend_mxpoolsz: 50
 stpred_name: start_maxpooled
