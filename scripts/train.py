@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 from multimodalattentivepooling.utils.moduleload import load_comp, load_args
 import torch
-from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts
+from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts,ReduceLROnPlateau
 
 
 def create_parse():
@@ -57,7 +57,8 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     optimizer, optimizer_args = load_comp(optimizer), load_args(optimizer_args)
     optimizer = optimizer(net.parameters(),**optimizer_args)
     # scheduler
-    scheduler = CosineAnnealingWarmRestarts(optimizer, 5000)
+    # scheduler = CosineAnnealingWarmRestarts(optimizer, 5000)
+    scheduler = ReduceLROnPlateau(optimizer, 'min')
     loss, loss_args = load_comp(loss), load_args(loss_args)
     loss = loss(**loss_args)
     train_args = load_args(train_args)
@@ -82,7 +83,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             data = loss(data)
             data["loss"].backward()
             optimizer.step()
-            scheduler.step(epoch + epoch_index / len(dataloader))
+            scheduler.step(data["loss"])
             # misclassification
             if epoch_index%5==0:
                 print(epoch, epoch_index,data["loss"].item())
