@@ -30,22 +30,22 @@ def run(input, output, device):
     moments = []
     with h5py.File(output, "w") as F:
         for vid_name in videos.keys():
-            desc_cntr = 0
             grp = F.create_group(vid_name)
             for ii in range(len(videos[vid_name]["sentences"])):
                 mmt = dict()
                 mmt["vid_name"] = vid_name
-                mmt["desc_id"] = desc_cntr
+                mmt["desc_id"] = ii
                 mmt["ts"] = videos[vid_name]["timestamps"][ii]
                 mmt["desc"] = videos[vid_name]["sentences"][ii]
                 mmt["duration"] = videos[vid_name]["duration"]
                 moments.append(mmt)
-                desc_cntr += 1
+                if len(moments)%1000==1:
+                    print(len(moments))
                 # bert encoding
                 input_ids = torch.tensor(tokenizer.encode(mmt["desc"])).unsqueeze(0).to(device)  # Batch size 1
                 outputs = model(input_ids)
                 last_hidden_states = outputs[0][0].data.cpu().numpy()
-                grp.create_dataset(str(desc_cntr),data=last_hidden_states)
+                grp.create_dataset(str(ii),data=last_hidden_states)
     print("{0} moments loaded".format(len(moments)))
 
 
