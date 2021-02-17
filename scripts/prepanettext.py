@@ -46,8 +46,6 @@ def run(input, output, device):
                 outputs = model(input_ids)
                 last_hidden_states = outputs[0][0].data.cpu().numpy()
                 grp.create_dataset(str(desc_cntr),data=last_hidden_states)
-            if len(moments) > 10:
-                break
     print("{0} moments loaded".format(len(moments)))
 
 
