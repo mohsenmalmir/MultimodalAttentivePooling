@@ -25,28 +25,17 @@ def run(input, output, device):
     model = BertModel.from_pretrained('bert-base-uncased').to(device)
     print("loading json input")
     with open(input,"rt") as f:
-        videos = json.load(f)
-    print("extracting moments")
-    moments = []
-    with h5py.File(output, "w") as F:
-        for vid_name in videos.keys():
-            grp = F.create_group(vid_name)
-            for ii in range(len(videos[vid_name]["sentences"])):
-                mmt = dict()
-                mmt["vid_name"] = vid_name
-                mmt["desc_id"] = ii
-                mmt["ts"] = videos[vid_name]["timestamps"][ii]
-                mmt["desc"] = videos[vid_name]["sentences"][ii]
-                mmt["duration"] = videos[vid_name]["duration"]
-                moments.append(mmt)
-                if len(moments)%1000==1:
-                    print(len(moments))
-                # bert encoding
-                input_ids = torch.tensor(tokenizer.encode(mmt["desc"])).unsqueeze(0).to(device)  # Batch size 1
-                outputs = model(input_ids)
-                last_hidden_states = outputs[0][0].data.cpu().numpy()
-                grp.create_dataset(str(ii),data=last_hidden_states)
+        moments = [json.loads(l) for l in f]
     print("{0} moments loaded".format(len(moments)))
+    with h5py.File(output, "w") as F:
+        for ii,m in enumerate(moments):
+            if ii%10==0:
+                print(ii)
+            # bert encoding
+            input_ids = torch.tensor(tokenizer.encode(m["desc"])).unsqueeze(0).to(device)  # Batch size 1
+            outputs = model(input_ids)
+            last_hidden_states = outputs[0][0].data.cpu().numpy()
+            F.create_dataset(str(m["desc_id"]),data=last_hidden_states)
 
 
 
