@@ -29,7 +29,7 @@ def run(input, output, device):
     print("{0} moments loaded".format(len(moments)))
     with h5py.File(output, "w") as F:
         for ii,m in enumerate(moments):
-            if ii%10==0:
+            if ii%1000==0:
                 print(ii)
             # bert encoding
             input_ids = torch.tensor(tokenizer.encode(m["desc"])).unsqueeze(0).to(device)  # Batch size 1
