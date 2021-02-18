@@ -72,7 +72,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
         # print(data["endtgt_maxpooled"].tolist())
         # print(torch.argmax(data["end_maxpooled"],dim=1).tolist())
         # print(data["ts"])
-        print(data["win3gt"])
+        # print(data["win3gt"])
 
     logger.wrap_up()
 
