@@ -1,0 +1,4 @@
+nepochs: 200
+device:
+  name: gpu
+  data: [win35gt,vis_feats,query_feats]

@@ -36,8 +36,10 @@ class ChunkIoU:
         # print(len(data))
         for jj in range(len(self.window_sizes)):
             clips_in_chunk = self.window_sizes[jj] // self.num_chunks[jj] # number of clips in each chunk
-            vis_feats = data[self.in_name] # B T C
-            B, T, C = vis_feats.shape
+            # vis_feats = data[self.in_name] # B T C
+            B = len(data[self.len_name])
+            T = max(data[self.len_name])
+            # B, T, C = vis_feats.shape
             # mark indices as -1 if they are out of the time limit of the video
             indices = torch.arange(T).unsqueeze(0).repeat(B,1)
             indices = indices.unsqueeze(2).unsqueeze(1).float() # B 1 T 1

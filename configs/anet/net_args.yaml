@@ -1,0 +1,10 @@
+window_sizes: [35]
+num_chunks: [5]
+out_names: [win35]
+vis_dim: 500
+q_dim: 768
+model_dim: 128
+len_name: vis_len
+stend_mxpoolsz: 128
+stpred_name: start_maxpooled
+endpred_name: end_maxpooled

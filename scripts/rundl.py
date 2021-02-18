@@ -37,12 +37,12 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     logger, logger_args= load_comp(logger), load_args(logger_args)
     logger = logger(**logger_args)
     # extract data
-    bc = np.zeros(2)
     for epoch_index, data in enumerate(dataloader):
         if epoch_index%1000==0:
             print(epoch_index)
         data = transforms(data)
         logger(data)
+    print(logger)
 
 
 

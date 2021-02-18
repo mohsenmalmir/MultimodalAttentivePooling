@@ -1,0 +1,4 @@
+in_names: [sttgt_maxpooled,endtgt_maxpooled,win35gt]
+ignore_val: -100
+bin_sizes: [128,128,2]
+print_interval: 1000

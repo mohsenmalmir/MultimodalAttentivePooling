@@ -5,7 +5,7 @@ from torch.utils.data import Dataset
 import numpy as np
 
 
-class TVRH5(Dataset):
+class ANET(Dataset):
     """
     This class implements a generic moment retrieval dataset.
     The dataset is organized around a set of frames and a json file that describes moments.
@@ -21,14 +21,6 @@ class TVRH5(Dataset):
             self.moments = [json.loads(l) for l in f]
         self.vis_feats = h5py.File(feats_h5file,"r")
         self.query_feats = h5py.File(query_h5file,"r")
-        # print("preloading...")
-        # self.vis_feats_np = dict()
-        # self.query_feats_np = dict()
-        # for ii,k in enumerate(self.moments):
-        #     if ii%1000==0:
-        #         print(ii)
-        #     self.vis_feats_np[k["vid_name"]] = np.array(self.vis_feats[k["vid_name"]]).shape
-        #     self.query_feats_np[str(k["desc_id"])] = np.array(self.query_feats[str(k["desc_id"])])
 
     def __len__(self):
         """
@@ -48,14 +40,14 @@ class TVRH5(Dataset):
         m = self.moments[idx]
         # load all images of this clip
         data = {
-                "vis_feats": np.array(self.vis_feats[m["vid_name"]]),
+                "vis_feats": np.array(self.vis_feats[m["vid_name"]]["c3d_features"]),
                 "query_feats": np.array(self.query_feats[str(m["desc_id"])]),
                 "ts": m["ts"],
                 "desc":m["desc"],
                 "duration":m["duration"],
                 "vid_name": m["vid_name"],
                 "desc_id": m["desc_id"],
-                "vis_len":self.vis_feats[m["vid_name"]].shape[0],
+                "vis_len":self.vis_feats[m["vid_name"]]["c3d_features"].shape[0],
                 "query_len":self.query_feats[str(m["desc_id"])].shape[0],
         }
         return data
