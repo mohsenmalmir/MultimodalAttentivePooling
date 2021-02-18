@@ -1,0 +1,4 @@
+device:
+  name: cuda:0
+  data: [win35gt,vis_feats,query_feats,sttgt_maxpooled,endtgt_maxpooled]
+ckpt: /content/drive/MyDrive/modchunks.ckpt

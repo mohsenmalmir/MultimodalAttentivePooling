@@ -1,0 +1,7 @@
+batch_size: 8
+shuffle: False
+num_workers: 0
+modules:
+  collate_fn:
+    comp: multimodalattentivepooling.transform.collate.CollateTVRH5
+    args: {}

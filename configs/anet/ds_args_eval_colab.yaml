@@ -1,0 +1,3 @@
+json_file: /content/val1_tvr.json
+feats_h5file: /content/sub_activitynet_v1-3.c3d.hdf5
+query_h5file: /content/anetq_val1.hdf5
