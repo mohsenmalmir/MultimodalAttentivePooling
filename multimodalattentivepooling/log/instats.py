@@ -16,7 +16,7 @@ class BinCount:
         self.bin_sizes = bin_sizes
         self.bin_counts = dict()
         for name,binsize in zip(self.in_names,self.bin_sizes):
-            self.bin_counts[name] = np.zeros(binsize)
+            self.bin_counts[name] = np.zeros(binsize,dtype=int)
         self.print_interval = print_interval
         self.log_cntr = 0
 
@@ -34,6 +34,13 @@ class BinCount:
         self.log_cntr += 1
         if self.log_cntr % self.print_interval == 0:
             print(self)
+
+    def conclude(self):
+        # invert-normalizemaxto1
+        for name in self.in_names:
+            self.bin_counts[name] = 1. / self.bin_counts[name]
+            self.bin_counts[name] = self.bin_counts[name] / np.max(self.bin_counts[name])
+        print(self)
 
     def __str__(self):
         return str(self.bin_counts)

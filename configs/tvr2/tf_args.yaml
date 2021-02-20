@@ -1,0 +1,10 @@
+order: [MaxPooledStartEnd]
+MaxPooledStartEnd:
+  comp: multimodalattentivepooling.transform.startend2.MaxPooledStartEnd
+  args:
+    maxpool_sizes: [128,64,32]
+    len_name: vis_len
+    dur_name: duration
+    ts_name: ts
+    start_outnames: [stgt3,stgt21,stgt55]
+    end_outnames: [etgt3,etgt21,etgt55]

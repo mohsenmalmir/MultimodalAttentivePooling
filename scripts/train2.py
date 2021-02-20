@@ -9,19 +9,7 @@ from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts,ReduceLROnPlate
 
 def create_parse():
     parser = argparse.ArgumentParser(description='Prepare TVR dataset.')
-    parser.add_argument('--dataset', '-ds', type=str, required=True, help='dataset module')
-    parser.add_argument('--dataset-args', '-dsa', type=Path, required=True, help='dataset args YAML')
-    parser.add_argument('--dataloader', '-dl', type=str, required=True, help='dataloader module')
-    parser.add_argument('--dataloader-args', '-dla', type=Path, required=True, help='dataloader args YAML')
-    parser.add_argument('--transforms', '-t', type=str, required=True, help='data transforms module')
-    parser.add_argument('--transforms-args', '-tfa', type=Path, required=True, help='YAML file containing transforms args')
-    parser.add_argument('--optimizer', '-o', type=str, required=True, help='optimizer')
-    parser.add_argument('--optimizer-args', '-oa', type=Path, required=False, help='optimizer args YAML file')
-    parser.add_argument('--net', '-n', type=str, required=True, help='network module')
-    parser.add_argument('--net-args', '-na', type=Path, required=True, help='network args YAML')
-    parser.add_argument('--loss', '-l', type=str, required=True, help='loss module')
-    parser.add_argument('--loss-args', '-la', type=Path, required=False, help='loss args YAML')
-    parser.add_argument('--train-args', '-ta', type=Path, required=True, help='train args YAML')
+    parser.add_argument('--config', '-cfg', type=str, required=True, help='run config yaml')
     return parser
 
 
@@ -104,4 +92,6 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
 if __name__=="__main__":
     parser = create_parse()
     args = parser.parse_args()
-    run(**vars(args))
+    # load run config
+    args = load_args(args.config)
+    run(**args)

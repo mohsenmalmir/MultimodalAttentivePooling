@@ -31,3 +31,7 @@ class CompositeTransform:
     def to(self, device):
         for t in self.transforms:
             t.to(device)
+
+    def conclude(self):
+        for t in self.transforms:
+            t.conclude()

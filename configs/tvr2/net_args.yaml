@@ -1,0 +1,9 @@
+window_sizes: [3, 21, 55]
+num_chunks: [3, 7, 11]
+vis_dim: 1024
+q_dim: 768
+model_dim: 128
+len_name: vis_len
+stend_mxpoolszs: [128, 64, 32]
+stpred_names: [st3, st21, st55]
+endpred_names: [end3, end21, end55]

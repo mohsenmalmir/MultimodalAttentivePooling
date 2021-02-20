@@ -38,11 +38,11 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     logger = logger(**logger_args)
     # extract data
     for epoch_index, data in enumerate(dataloader):
-        if epoch_index%1000==0:
+        if epoch_index%2000==1999:
             print(epoch_index)
         data = transforms(data)
         logger(data)
-    print(logger)
+    logger.conclude()
 
 
 

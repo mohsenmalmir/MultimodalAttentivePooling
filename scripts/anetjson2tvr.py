@@ -27,6 +27,7 @@ def run(input, output):
             mmt["ts"] = anet_data[vid_name]["timestamps"][ii]
             mmt["desc"] = anet_data[vid_name]["sentences"][ii]
             mmt["duration"] = anet_data[vid_name]["duration"]
+            mmt["type"] = "v" # this is not used but required for TVR eval script
             desc_id += 1
             tvr_format.append(mmt)
     with open(output,"wt") as f:

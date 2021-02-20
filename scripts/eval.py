@@ -74,7 +74,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
         # print(data["ts"])
         # print(data["win3gt"])
 
-    logger.wrap_up()
+    logger.conclude()
 
 
 if __name__=="__main__":

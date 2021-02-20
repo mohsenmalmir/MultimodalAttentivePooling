@@ -1,0 +1,13 @@
+dataset: multimodalattentivepooling.dataset.tvrh5.TVRH5
+dataset_args: ./configs/tvr2/ds_args_colab.yaml
+dataloader: torch.utils.data.DataLoader
+dataloader_args: ./configs/tvr2/dl_args_colab.yaml
+transforms: multimodalattentivepooling.transform.composite.CompositeTransform
+transforms_args: ./configs/tvr2/tf_args.yaml
+optimizer: torch.optim.Adam
+optimizer_args: ./configs/tvr2/adam_args.yaml
+net: multimodalattentivepooling.model.modchunks3.ModulatedChunks
+net_args: ./configs/tvr2/net_args.yaml
+loss: multimodalattentivepooling.transform.composite.CompositeTransform
+loss_args: ./configs/tvr2/loss_args.yaml
+train_args: ./configs/tvr2/train_args_colab.yaml

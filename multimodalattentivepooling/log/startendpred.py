@@ -65,7 +65,7 @@ class TVRH5StartEnd:
             self.pred.append(next_pred)
             # print(next_pred["predictions"])
 
-    def wrap_up(self):
+    def conclude(self):
         """
         save the predictions to json
         """

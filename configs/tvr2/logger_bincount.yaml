@@ -1,0 +1,4 @@
+in_names: [stgt3,stgt21,stgt55,etgt3,etgt21,etgt55]
+ignore_val: -100
+bin_sizes: [128,64,32,128,64,32]
+print_interval: 1000
