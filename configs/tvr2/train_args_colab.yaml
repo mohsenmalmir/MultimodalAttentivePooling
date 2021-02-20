@@ -1,4 +1,4 @@
 nepochs: 200
 device:
-  name: gpu
+  name: cuda:0
   data: [stgt3,stgt21,stgt55,etgt3,etgt21,etgt55,vis_feats,query_feats]
