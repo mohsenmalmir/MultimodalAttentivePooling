@@ -1,0 +1,4 @@
+device:
+  name: cuda:0
+  data: [stgt3,stgt21,stgt55,vis_feats,query_feats]
+ckpt: /content/drive/MyDrive/mohsenmalmir/modchunks.ckpt

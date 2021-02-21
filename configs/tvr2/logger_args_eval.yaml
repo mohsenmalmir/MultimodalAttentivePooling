@@ -1,0 +1,22 @@
+order: [pred32,pred64,pred128]
+pred32:
+  comp: multimodalattentivepooling.log.startendpred.TVRH5StartEnd
+  args:
+    start_name: st32
+    end_name: end32
+    duration: duration
+    output: /content/drive/MyDrive/tvr2_pred32.json
+pred64:
+  comp: multimodalattentivepooling.log.startendpred.TVRH5StartEnd
+  args:
+    start_name: st64
+    end_name: end64
+    duration: duration
+    output: /content/drive/MyDrive/tvr2_pred64.json
+pred128:
+  comp: multimodalattentivepooling.log.startendpred.TVRH5StartEnd
+  args:
+    start_name: st128
+    end_name: end128
+    duration: duration
+    output: /content/drive/MyDrive/tvr2_pred128.json
