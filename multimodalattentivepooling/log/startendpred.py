@@ -64,6 +64,7 @@ class TVRH5StartEnd:
                         }
             self.pred.append(next_pred)
             # print(next_pred["predictions"])
+        return data # this is to be compatible with transform
 
     def conclude(self):
         """

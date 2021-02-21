@@ -1,0 +1,11 @@
+dataset: multimodalattentivepooling.dataset.tvrh5.TVRH5
+dataset_args: ./configs/tvr2/ds_args_eval.yaml
+dataloader: torch.utils.data.DataLoader
+dataloader_args: ./configs/tvr2/dl_args.yaml
+transforms: multimodalattentivepooling.transform.composite.CompositeTransform
+transforms_args: ./configs/tvr2/tf_args.yaml
+net: multimodalattentivepooling.model.modchunks3.ModulatedChunks
+net_args: ./configs/tvr2/net_args.yaml
+eval_args: ./configs/tvr2/eval_args.yaml
+logger: multimodalattentivepooling.transform.composite.CompositeTransform
+logger_args: ./configs/tvr2/logger_args_eval.yaml
