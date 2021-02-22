@@ -1,4 +1,4 @@
-dataset: multimodalattentivepooling.dataset.tvrh5.TVRH5
+dataset: multimodalattentivepooling.dataset.tvr2.TVRH5
 dataset_args: ./configs/tvr2/ds_args.yaml
 dataloader: torch.utils.data.DataLoader
 dataloader_args: ./configs/tvr2/dl_args.yaml
