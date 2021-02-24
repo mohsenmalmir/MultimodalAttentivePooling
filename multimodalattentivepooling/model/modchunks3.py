@@ -16,7 +16,7 @@ class ModulatedChunks(Module):
     seq_enc1: SeqEncoder
     seq_enc2: SeqEncoder
     def __init__(self, window_sizes, num_chunks, vis_dim, q_dim, model_dim, len_name, stend_mxpoolszs,
-                 stpred_names, endpred_names):
+                 stpred_names, endpred_names, seg_names):
         super(ModulatedChunks, self).__init__()
         # positional encodings of the sequences
         self.vid_pe = PositionalEncoding(vis_dim)
@@ -39,6 +39,10 @@ class ModulatedChunks(Module):
         for end_name,mxpool_sz in zip(endpred_names,stend_mxpoolszs):
             end_pred[end_name] = Linear(model_dim*mxpool_sz,mxpool_sz)
         self.end_pred = ModuleDict(end_pred)
+        seg_pred = dict()
+        for seg_name,mxpool_sz in zip(seg_names,stend_mxpoolszs):
+            seg_pred[seg_name] = Linear(model_dim,2)
+        self.seg_pred = ModuleDict(seg_pred)
         self.device = None
         self.len_name = len_name
         maxpool_startend = dict()
@@ -46,6 +50,7 @@ class ModulatedChunks(Module):
             maxpool_startend[str(ii)] = AdaptiveMaxPool1d(stend_mxpoolszs[ii])
         self.maxpool_startend = ModuleDict(maxpool_startend)
         self.start_names, self.end_names  = stpred_names, endpred_names
+        self.seg_names = seg_names
 
     def to(self, device):
         self.device = device
@@ -82,6 +87,9 @@ class ModulatedChunks(Module):
             M = [M[bb,:l,:,:].view(-1,self.model_dim).unsqueeze(0).transpose(1,2) for bb,l in zip(range(B),data[self.len_name])]
             # max-pool
             max_pooled = torch.cat([self.maxpool_startend[str(jj)](m) for m in M],dim=0)
+            # predict segment
+            data[self.seg_names[jj]] = self.seg_pred[self.seg_names[jj]](max_pooled.transpose(1,2)).transpose(1,2)
+            # predict start/end
             max_pooled = max_pooled.view(B, -1)
             data[self.start_names[jj]] = self.start_pred[self.start_names[jj]](max_pooled).unsqueeze(2)
             data[self.end_names[jj]] = self.end_pred[self.end_names[jj]](max_pooled).unsqueeze(2)

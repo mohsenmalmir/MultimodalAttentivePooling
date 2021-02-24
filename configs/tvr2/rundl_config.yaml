@@ -1,0 +1,8 @@
+dataset: multimodalattentivepooling.dataset.tvr2.TVRH5
+dataset_args: ./configs/tvr2/ds_args.yaml
+dataloader: torch.utils.data.DataLoader
+dataloader_args: ./configs/tvr2/dl_args.yaml
+transforms: multimodalattentivepooling.transform.composite.CompositeTransform
+transforms_args: ./configs/tvr2/tf_args.yaml
+logger: multimodalattentivepooling.log.instats.BinCount
+logger_args: ./configs/tvr2/logger_bincount.yaml

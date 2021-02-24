@@ -1,4 +1,4 @@
-order: [MaxPooledStartEnd]
+order: [MaxPooledStartEnd, SegmentTarget]
 MaxPooledStartEnd:
   comp: multimodalattentivepooling.transform.startend2.MaxPooledStartEnd
   args:
@@ -8,3 +8,11 @@ MaxPooledStartEnd:
     ts_name: ts
     start_outnames: [stgt3,stgt21,stgt55]
     end_outnames: [etgt3,etgt21,etgt55]
+SegmentTarget:
+  comp: multimodalattentivepooling.transform.segment.SegmentTarget
+  args:
+    maxpool_sizes: [128,64,32]
+    len_name: vis_len
+    dur_name: duration
+    ts_name: ts
+    out_names: [segtgt3,segtgt21,segtgt55]
