@@ -81,10 +81,10 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
                 # print(data["win33gt"].shape)
                 # idx = np.where(gt != -100)
                 # print(confusion_matrix(gt[idx], pred[idx]))
-                print(data["stgt21"].tolist())
-                print(torch.argmax(data["st21"],dim=1).tolist())
-                print(data["etgt21"].tolist())
-                print(torch.argmax(data["end21"],dim=1).tolist())
+                print(data["stgt3"].tolist())
+                print(torch.argmax(data["start"],dim=1).tolist())
+                print(data["etgt3"].tolist())
+                print(torch.argmax(data["end"],dim=1).tolist())
         torch.save(net.state_dict(), "/content/drive/MyDrive/modchunks.ckpt")
 
 

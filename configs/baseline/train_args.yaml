@@ -1,0 +1,4 @@
+nepochs: 10
+device:
+  name: cpu
+  data: [stgt3,etgt3,vis_feats,query_feats]
