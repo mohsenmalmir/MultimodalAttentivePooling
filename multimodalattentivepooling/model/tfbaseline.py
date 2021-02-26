@@ -28,7 +28,7 @@ class Baseline(Module):
         self.device = None
         self.len_name = len_name
         self.start_name, self.end_name = start_name, end_name
-        self.mha = MultiheadAttention(vis_dim,4)
+        self.mha = MultiheadAttention(vis_dim,2)
 
 
     def to(self, device):
