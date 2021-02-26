@@ -16,8 +16,10 @@ class Baseline(Module):
         # positional encodings of the sequences
         self.vid_pe = PositionalEncoding(vis_dim)
         self.seq_pe = PositionalEncoding(q_dim)
-        self.vid_enc = SeqEncoder(d_model=vis_dim, d_out=vis_dim)
-        self.query_enc = SeqEncoder(d_model=q_dim, d_out=vis_dim)
+        # self.vid_enc = SeqEncoder(d_model=vis_dim, d_out=vis_dim)
+        # self.query_enc = SeqEncoder(d_model=q_dim, d_out=vis_dim)
+        self.vid_enc = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim))
+        self.query_enc = torch.nn.Sequential(Linear(q_dim, q_dim),ReLU(),Linear(q_dim, vis_dim))
         self.vis_dim, self.q_dim = vis_dim, q_dim
         self.start_pred = Linear(pred_len*vis_dim, pred_len)
         self.end_pred = Linear(pred_len*vis_dim, pred_len)
