@@ -1,10 +1,3 @@
 json_file: /content/tvr_train_release.jsonl
 feats_h5file: /content/tvr_i3d_rgb600_avg_cl-1.5.h5
 query_h5file: /content/tvr_query_pretrained_w_query.h5
-modules:
-  transform:
-    comp: multimodalattentivepooling.transform.dataaug.DataAug
-    args:
-      max_moment_clip: 0.1
-      max_clip: 0.3
-
