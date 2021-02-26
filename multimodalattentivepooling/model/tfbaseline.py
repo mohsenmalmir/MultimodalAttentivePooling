@@ -48,6 +48,7 @@ class Baseline(Module):
         query = self.q_pool(query.transpose(1,2)).transpose(1,2)
         # transpose C to dim=1 to apply unfold
         vis_feats = self.mha(query.transpose(0,1),vis_feats.transpose(0,1),vis_feats.transpose(0,1))[0].transpose(0,1)
+        vis_feats = vis_feats + query
         vis_feats = vis_feats.contiguous().view(vis_feats.shape[0],-1)
         data[self.start_name] = self.start_pred(vis_feats).unsqueeze(2)
         data[self.end_name] = self.end_pred(vis_feats).unsqueeze(2)
