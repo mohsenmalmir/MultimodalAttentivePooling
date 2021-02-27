@@ -1,0 +1,11 @@
+dataset: multimodalattentivepooling.dataset.tvrh5.TVRH5
+dataset_args: ./configs/baseline/ds_args_eval_colab.yaml
+dataloader: torch.utils.data.DataLoader
+dataloader_args: ./configs/baseline/dl_args_colab.yaml
+transforms: multimodalattentivepooling.transform.composite.CompositeTransform
+transforms_args: ./configs/baseline/tf_args.yaml
+net: multimodalattentivepooling.model.tfbaseline.Baseline
+net_args: ./configs/baseline/net_args.yaml
+eval_args: ./configs/baseline/eval_args_colab.yaml
+logger: multimodalattentivepooling.transform.composite.CompositeTransform
+logger_args: ./configs/baseline/logger_args_eval.yaml

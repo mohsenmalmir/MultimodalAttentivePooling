@@ -1,0 +1,8 @@
+order: [predict]
+predict:
+  comp: multimodalattentivepooling.log.startendpred.TVRH5StartEnd
+  args:
+    start_name: start
+    end_name: end
+    duration: duration
+    output: /content/drive/MyDrive/baseline_pred.json
