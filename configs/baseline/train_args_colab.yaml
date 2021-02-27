@@ -2,3 +2,4 @@ nepochs: 200
 device:
   name: cuda:0
   data: [stgt3,etgt3,vis_feats,query_feats]
+ckpt: /drive/MyDrive/modchunkd.ckpt
