@@ -52,5 +52,4 @@ class Baseline(Module):
         # vis_feats = vis_feats.contiguous().view(vis_feats.shape[0],-1)
         data[self.start_name] = self.start_pred(vis_feats)
         data[self.end_name] = self.end_pred(vis_feats)
-        print(data[self.start_name].shape)
         return data
