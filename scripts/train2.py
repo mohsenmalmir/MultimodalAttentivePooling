@@ -45,14 +45,13 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
     optimizer, optimizer_args = load_comp(optimizer), load_args(optimizer_args)
     optimizer = optimizer(net.parameters(),**optimizer_args)
     # scheduler
-    # scheduler = CosineAnnealingWarmRestarts(optimizer, 5000)
+    scheduler = CosineAnnealingWarmRestarts(optimizer, 5000)
     loss, loss_args = load_comp(loss), load_args(loss_args)
     loss = loss(**loss_args)
     train_args = load_args(train_args)
     # training loop
     device = torch.device(train_args["device"]["name"])
     net.to(device)
-    # net.eval()
     if "ckpt" in train_args.keys():
         print("loading from checkpoint:",device)
         net.load_state_dict(torch.load(train_args["ckpt"], map_location=device))
@@ -70,7 +69,7 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             data = loss(data)
             data["loss"].backward()
             optimizer.step()
-            # scheduler.step(epoch + epoch_index / len(dataloader))
+            scheduler.step(epoch + epoch_index / len(dataloader))
             # misclassification
             if epoch_index%500==0:
                 print(epoch, epoch_index,data["loss"].item())
