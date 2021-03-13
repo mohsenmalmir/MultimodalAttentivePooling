@@ -1,0 +1,17 @@
+order: [StartLoss3, EndLoss3]
+StartLoss3:
+  comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
+  args:
+    module:
+      comp: torch.nn.CrossEntropyLoss
+      args: {}
+    out_name: start
+    tgt_name: stgt3
+EndLoss3:
+  comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
+  args:
+    module:
+      comp: torch.nn.CrossEntropyLoss
+      args: {}
+    out_name: end
+    tgt_name: etgt3
