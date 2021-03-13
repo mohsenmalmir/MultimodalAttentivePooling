@@ -9,5 +9,5 @@ optimizer_args: ./configs/baseline/adam_args.yaml
 net: multimodalattentivepooling.model.tfbaseline.Baseline
 net_args: ./configs/baseline/net_args.yaml
 loss: multimodalattentivepooling.transform.composite.CompositeTransform
-loss_args: ./configs/baseline/loss_args_now.yaml
+loss_args: ./configs/baseline/loss_args.yaml
 train_args: ./configs/baseline/train_args.yaml
