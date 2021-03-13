@@ -12,7 +12,7 @@ class Baseline(Module):
     This module implements the modulated chunks idea. Input is assumed to be a set of clips.
     The output is a set of modulated chunks in a sliding window fashion.
     """
-    def __init__(self, vis_dim, q_dim, len_name, pred_len, start_name, end_name):
+    def __init__(self, vis_dim, q_dim, len_name, qlen_name, pred_len, start_name, end_name):
         super(Baseline, self).__init__()
         # positional encodings of the sequences
         self.vid_pe = PositionalEncoding(vis_dim)
@@ -31,6 +31,7 @@ class Baseline(Module):
         self.q_pool = AdaptiveMaxPool1d(pred_len)
         self.device = None
         self.len_name = len_name
+        self.qlen_name = qlen_name
         self.start_name, self.end_name = start_name, end_name
         self.mha = MultiheadAttention(vis_dim,2)
         self.out = LogSoftmax(dim=1)
@@ -43,14 +44,20 @@ class Baseline(Module):
     def forward(self,data: dict):
         # video: expected shape of BTC
         vis_feats = data["vis_feats"] # B T C
+        B = vis_feats.size(0)
         vis_feats = self.vid_pe(vis_feats) # positional signal included in the features
         vis_feats = self.vid_enc(vis_feats)
-        vis_feats = self.vid_pool(vis_feats.transpose(1,2)).transpose(1,2)
+        # vis_feats = self.vid_pool(vis_feats.transpose(1,2)).transpose(1,2)
+        vis_feats = [self.vid_pool(vis_feats[bb,:l,:].unsqueeze(0).transpose(1,2)).transpose(1,2) for bb,l in zip(range(B),data[self.len_name])]
+        vis_feats = torch.cat(vis_feats,dim=0)
+
         # encode query
         query = data["query_feats"] # BxLxC
         query = self.seq_pe(query) # add positional signals to the query
         query = self.query_enc(query) # module labeld '1' in the slide
-        query = self.q_pool(query.transpose(1,2)).transpose(1,2)
+        # query = self.q_pool(query.transpose(1,2)).transpose(1,2)
+        query = [self.q_pool(query[bb,:l,:].unsqueeze(0).transpose(1,2)).transpose(1,2) for bb,l in zip(range(B),data[self.qlen_name])]
+        query = torch.cat(query,dim=0)
         # transpose C to dim=1 to apply unfold
         vis_feats = self.mha(query.transpose(0,1),vis_feats.transpose(0,1),vis_feats.transpose(0,1))[0].transpose(0,1)
         vis_feats = vis_feats + query
