@@ -1,5 +1,5 @@
 from torch.nn import Module, AdaptiveMaxPool1d, Linear,ReLU,ModuleList,ModuleDict,Sequential,Dropout,MultiheadAttention
-from torch.nn import Conv1d
+from torch.nn import Conv1d, LogSoftmax
 import torch.nn.functional as F
 from multimodalattentivepooling.model.encoder import SeqEncoder
 from multimodalattentivepooling.model.sequtils import PositionalEncoding
@@ -32,6 +32,7 @@ class Baseline(Module):
         self.len_name = len_name
         self.start_name, self.end_name = start_name, end_name
         self.mha = MultiheadAttention(vis_dim,2)
+        self.out = LogSoftmax(dim=1)
 
 
     def to(self, device):
@@ -56,6 +57,6 @@ class Baseline(Module):
         # vis_feats = vis_feats.contiguous().view(vis_feats.shape[0],-1)
         # data[self.start_name] = self.start_pred(vis_feats.transpose(1,2)).transpose(1,2)
         # data[self.end_name] = self.end_pred(vis_feats.transpose(1,2)).transpose(1,2)
-        data[self.start_name] = self.start_pred(vis_feats).squeeze(1)
-        data[self.end_name] = self.end_pred(vis_feats).squeeze(1)
+        data[self.start_name] = self.out(self.start_pred(vis_feats).squeeze(1))
+        data[self.end_name] = self.out(self.end_pred(vis_feats).squeeze(1))
         return data
