@@ -3,3 +3,5 @@ q_dim: 768
 len_name: vis_len
 qlen_name: query_len
 segment_name: spred
+lpred_name: lpred
+rpred_name: rpred

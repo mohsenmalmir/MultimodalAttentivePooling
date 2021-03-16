@@ -50,6 +50,6 @@ class SegmentTarget2:
             S = int(starts[ii] / dur[ii] * l)
             E = int(ends[ii] / dur[ii] * l)
             segment[ii,l:] = -100
-            segment[ii,S:E] = 1
+            segment[ii,S:E+1] = 1
         data[self.out_name] = segment
         return data

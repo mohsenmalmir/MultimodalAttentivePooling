@@ -1,4 +1,4 @@
-order: [SegmentLoss]
+order: [SegmentLoss,LRegLoss,RRegLoss]
 SegmentLoss:
   comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
   args:
@@ -8,3 +8,21 @@ SegmentLoss:
         weight: [0.13445243, 1.]
     out_name: spred
     tgt_name: stgt
+LRegLoss:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: lpred
+    tgt_name: ltgt
+    ignore_val: -100
+RRegLoss:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: rpred
+    tgt_name: rtgt
+    ignore_val: -100

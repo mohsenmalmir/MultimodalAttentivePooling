@@ -12,7 +12,7 @@ class Baseline(Module):
     This module implements the modulated chunks idea. Input is assumed to be a set of clips.
     The output is a set of modulated chunks in a sliding window fashion.
     """
-    def __init__(self, vis_dim, q_dim, len_name, qlen_name, segment_name):
+    def __init__(self, vis_dim, q_dim, len_name, qlen_name, segment_name, lpred_name, rpred_name):
         super(Baseline, self).__init__()
         # positional encodings of the sequences
         self.vid_pe = PositionalEncoding(vis_dim)
@@ -30,6 +30,10 @@ class Baseline(Module):
         self.segment_name = segment_name
         self.mha = MultiheadAttention(vis_dim,2)
         self.out = LogSoftmax(dim=1)
+        self.lpred_name = lpred_name
+        self.rpred_name = rpred_name
+        self.lpred = Linear(vis_dim,1)
+        self.rpred = Linear(vis_dim,1)
 
 
     def to(self, device):
@@ -50,4 +54,6 @@ class Baseline(Module):
         # transpose C to dim=1 to apply unfold
         # vis_feats = self.mha(query.transpose(0,1),vis_feats.transpose(0,1),vis_feats.transpose(0,1))[0].transpose(0,1)
         data[self.segment_name] = self.out(self.seg_pred(vis_feats).transpose(1,2))
+        data[self.lpred_name] = self.lpred(vis_feats).squeeze(2)
+        data[self.rpred_name] = self.rpred(vis_feats).squeeze(2)
         return data
