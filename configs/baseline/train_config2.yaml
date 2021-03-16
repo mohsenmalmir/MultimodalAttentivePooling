@@ -1,0 +1,13 @@
+dataset: multimodalattentivepooling.dataset.tvr2.TVRH5
+dataset_args: ./configs/baseline/ds_args.yaml
+dataloader: torch.utils.data.DataLoader
+dataloader_args: ./configs/baseline/dl_args.yaml
+transforms: multimodalattentivepooling.transform.composite.CompositeTransform
+transforms_args: ./configs/baseline/tf_args2.yaml
+optimizer: torch.optim.Adam
+optimizer_args: ./configs/baseline/adam_args.yaml
+net: multimodalattentivepooling.model.tfbaseline2.Baseline
+net_args: ./configs/baseline/net_args2.yaml
+loss: multimodalattentivepooling.transform.composite.CompositeTransform
+loss_args: ./configs/baseline/loss_args2.yaml
+train_args: ./configs/baseline/train_args2.yaml

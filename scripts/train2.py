@@ -73,17 +73,15 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             # misclassification
             if epoch_index%500==0:
                 print(epoch, epoch_index,data["loss"].item())
-                # pred = data["st21"]
+                pred = data["spred"]
                 # print(pred.shape)
-                # pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
-                # gt = data["stgt21"].data.cpu().numpy().reshape(-1)
+                pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
+                gt = data["stgt"].data.cpu().numpy().reshape(-1)
                 # print(data["win33gt"].shape)
-                # idx = np.where(gt != -100)
-                # print(confusion_matrix(gt[idx], pred[idx]))
-                print(data["stgt3"].tolist())
-                print(torch.argmax(data["start"],dim=1).tolist())
-                print(data["etgt3"].tolist())
-                print(torch.argmax(data["end"],dim=1).tolist())
+                idx = np.where(gt != -100)
+                print(confusion_matrix(gt[idx], pred[idx]))
+                # print(data["stgt"].tolist())
+                # print(torch.argmax(data["spred"],dim=1).tolist())
         torch.save(net.state_dict(), "/content/drive/MyDrive/modchunks.ckpt")
 
 

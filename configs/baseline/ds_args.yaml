@@ -1,9 +1,9 @@
 json_file: /Users/mohsenmalmir/Code/Vision/TVRetrieval/data/tvr_train_release.jsonl
 feats_h5file: /Users/mohsenmalmir/Documents/data/tvr_feature_release/video_feature/tvr_i3d_rgb600_avg_cl-1.5.h5
 query_h5file: /Users/mohsenmalmir/Documents/data/tvr_feature_release/bert_feature/query_only/tvr_query_pretrained_w_query.h5
-modules:
-  transform:
-    comp: multimodalattentivepooling.transform.dataaug.DataAug
-    args:
-      max_moment_clip: 0.1
-      max_clip: 0.3
+#modules:
+#  transform:
+#    comp: multimodalattentivepooling.transform.dataaug.DataAug
+#    args:
+#      max_moment_clip: 0.1
+#      max_clip: 0.3

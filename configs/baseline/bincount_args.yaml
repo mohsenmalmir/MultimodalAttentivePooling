@@ -1,0 +1,4 @@
+in_names: [stgt]
+ignore_val: -100
+bin_sizes: [2]
+print_interval: 1000

@@ -1,0 +1,10 @@
+order: [SegmentLoss]
+SegmentLoss:
+  comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
+  args:
+    module:
+      comp: torch.nn.NLLLoss
+      args:
+        weight: [0.13445243, 1.]
+    out_name: spred
+    tgt_name: stgt

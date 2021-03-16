@@ -1,0 +1,9 @@
+order: [Segment]
+Segment:
+  comp: multimodalattentivepooling.transform.segment.SegmentTarget2
+  args:
+    vis_name: vis_feats
+    len_name: vis_len
+    dur_name: duration
+    ts_name: ts
+    out_name: stgt

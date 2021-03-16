@@ -1,6 +1,4 @@
 import argparse
-from pathlib import Path
-import numpy as np
 from multimodalattentivepooling.utils.moduleload import load_comp, load_args
 
 def create_parse():
