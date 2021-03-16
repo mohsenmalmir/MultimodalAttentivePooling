@@ -1,4 +1,4 @@
 nepochs: 200
 device:
   name: cuda:0
-  data: [stgt,vis_feats,query_feats]
+  data: [ltgt,rtgt,stgt,vis_feats,query_feats]
