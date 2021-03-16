@@ -73,6 +73,8 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             # misclassification
             if epoch_index%500==0:
                 print(epoch, epoch_index,data["loss"].item())
+                idx = np.where(data["ltgt"].data.cpu().numpy()[0,:]!=-100)[0]
+                print(data["lpred"][0,idx])
                 pred = data["spred"]
                 # print(pred.shape)
                 pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
