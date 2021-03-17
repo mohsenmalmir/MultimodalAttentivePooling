@@ -43,7 +43,7 @@ class Baseline(Module):
     def forward(self,data: dict):
         # video: expected shape of BTC
         vis_feats = data["vis_feats"] # B T C
-        B = vis_feats.size(0)
+        B,L,_ = vis_feats.shape
         vis_feats = self.vid_pe(vis_feats) # positional signal included in the features
         vis_feats = self.vid_enc(vis_feats)
 
@@ -52,7 +52,11 @@ class Baseline(Module):
         query = self.seq_pe(query) # add positional signals to the query
         query = self.query_enc(query) # module labeld '1' in the slide
         # transpose C to dim=1 to apply unfold
-        # vis_feats = self.mha(query.transpose(0,1),vis_feats.transpose(0,1),vis_feats.transpose(0,1))[0].transpose(0,1)
+        query = [query[b,:l,:].unsqueeze(0) for b,l in zip(range(B),data[self.qlen_name])]
+        query = [AdaptiveMaxPool1d(l)(q.transpose(1,2)).transpose(1,2) for q,l in zip(query,data[self.len_name])]
+        query = [F.pad(q,(0,0,0,L-q.shape[1])) for q in query]
+        query = torch.cat(query,dim=0)
+        vis_feats = self.mha(query.transpose(0,1),vis_feats.transpose(0,1),vis_feats.transpose(0,1))[0].transpose(0,1)
         data[self.segment_name] = self.out(self.seg_pred(vis_feats).transpose(1,2))
         data[self.lpred_name] = self.lpred(vis_feats).squeeze(2)
         data[self.rpred_name] = self.rpred(vis_feats).squeeze(2)
