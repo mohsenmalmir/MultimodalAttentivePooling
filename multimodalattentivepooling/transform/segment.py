@@ -79,3 +79,6 @@ class Predict:
         # print(pred)
         data[self.out_name] = pred
         return data
+
+    def conclude(self):
+        pass

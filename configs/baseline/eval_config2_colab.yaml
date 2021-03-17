@@ -8,4 +8,4 @@ net: multimodalattentivepooling.model.tfbaseline2.Baseline
 net_args: ./configs/baseline/net_args2.yaml
 eval_args: ./configs/baseline/eval_args2_colab.yaml
 logger: multimodalattentivepooling.transform.composite.CompositeTransform
-logger_args: ./configs/baseline/logger_args_eval2.yaml
+logger_args: ./configs/baseline/logger_args_eval2_colab.yaml
