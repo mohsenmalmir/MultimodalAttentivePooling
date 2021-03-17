@@ -145,12 +145,12 @@ class LogSegment:
             self.pred.append(next_pred)
             # print(next_pred["predictions"])
 
-    def wrap_up(self):
+    def conclude(self):
         """
         save the predictions to json
         """
         results = {"video2idx":self.video2idx,"SVMR":self.pred}
-        with open(self.output,"wt") as f:
+        with open(self.out_name,"wt") as f:
             f.write(json.dumps(results))
 
     def __str__(self):
