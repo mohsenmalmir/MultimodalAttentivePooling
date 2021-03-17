@@ -1,4 +1,6 @@
 import torch
+from skimage.morphology import binary_opening
+import numpy as np
 
 class SegmentTarget:
     """
@@ -52,4 +54,28 @@ class SegmentTarget2:
             segment[ii,l:] = -100
             segment[ii,S:E+1] = 1
         data[self.out_name] = segment
+        return data
+
+class Predict:
+    """
+    predict the moment from network's segment output.
+    """
+    def __init__(self, pred_name, len_name, out_name):
+        self.pred_name = pred_name
+        self.len_name = len_name
+        self.out_name = out_name
+
+    def __call__(self, data):
+        pred = data[self.pred_name]
+        pred = torch.argmax(pred,dim=1)
+        # crop based on video length
+        pred = [np.asarray(pred[bb,:l].tolist()) for bb,l in zip(range(pred.shape[0]),data[self.len_name])]
+        # print(pred[0])
+        # suppress noisy predictions
+        pred = [binary_opening(p).astype(int) for p in pred]
+        # print(pred[0])
+        pred = [np.where(p>0)[0] for p in pred]
+        pred = [(p[0],p[-1]) if p.shape[0]>0 else (-1,-1) for p in pred]
+        # print(pred)
+        data[self.out_name] = pred
         return data

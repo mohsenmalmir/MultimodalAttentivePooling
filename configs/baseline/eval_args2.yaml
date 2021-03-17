@@ -1,0 +1,4 @@
+device:
+  name: cpu
+  data: [stgt,ltgt,rtgt,vis_feats,query_feats]
+ckpt: /Users/mohsenmalmir/Downloads/modchunks.ckpt
