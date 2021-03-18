@@ -1,0 +1,15 @@
+order: [predict,record]
+predict:
+  comp: multimodalattentivepooling.transform.segment.Predict
+  args:
+    pred_name: spred3
+    len_name: vis_len3
+    out_name: smoment
+record:
+  comp: multimodalattentivepooling.log.segmentpred.LogSegment
+  args:
+    pred_name: smoment
+    len_name: vis_len3
+    dur_name: duration
+    vid_name: vid_name
+    out_name: /Users/mohsenmalmir/Downloads/pred_baseline.json
