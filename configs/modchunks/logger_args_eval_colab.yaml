@@ -12,4 +12,4 @@ record:
     len_name: vis_len3
     dur_name: duration
     vid_name: vid_name
-    out_name: /content/drive/MyDrive/modchunks_results.json
+    out_name: /content/drive/MyDrive/modchunks_pred.json
