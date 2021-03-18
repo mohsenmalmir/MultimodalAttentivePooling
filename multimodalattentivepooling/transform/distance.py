@@ -26,7 +26,7 @@ class NormalizedLRDist:
             E = int(ends[ii] / dur[ii] * l)
             SZ = ltgt[ii,S:E+1].shape[0]
             ltgt[ii,S:E+1] = torch.arange(SZ) / float(SZ)
-            rtgt[ii,S:E+1] = torch.arange(SZ) / float(SZ)
+            rtgt[ii,S:E+1] = torch.arange(SZ-1,-1,-1) / float(SZ)
         data[self.lout_name] = ltgt
         data[self.rout_name] = rtgt
         return data

@@ -53,6 +53,7 @@ class SegmentTarget2:
             segment[ii,l:] = -100
             segment[ii,S:E+1] = 1
         data[self.out_name] = segment
+        # print(segment, self.out_name)
         return data
 
 class ShiftLen:

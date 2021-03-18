@@ -74,7 +74,7 @@ class ModulatedChunks(Module):
         modulated = [sw*vu for sw,vu in zip(sel_words, vis_unfolded)]
         modulated = [m.squeeze() for m in modulated]
         # print([m.shape for m in modulated])
-        segments = [self.seg_pred(m).transpose(1,2) for m in modulated]
+        segments = [self.out(self.seg_pred(m).transpose(1,2)) for m in modulated]
         # print([s.shape for s in segments])
         lpred = [self.lpred(m).squeeze() for m in modulated]
         # print([l.shape for l in lpred])
