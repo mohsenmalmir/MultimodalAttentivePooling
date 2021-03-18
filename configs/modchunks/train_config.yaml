@@ -1,0 +1,13 @@
+dataset: multimodalattentivepooling.dataset.tvr2.TVRH5
+dataset_args: ./configs/modchunks/ds_args.yaml
+dataloader: torch.utils.data.DataLoader
+dataloader_args: ./configs/modchunks/dl_args.yaml
+transforms: multimodalattentivepooling.transform.composite.CompositeTransform
+transforms_args: ./configs/modchunks/tf_args.yaml
+optimizer: torch.optim.Adam
+optimizer_args: ./configs/modchunks/adam_args.yaml
+net: multimodalattentivepooling.model.modchunks4.ModulatedChunks
+net_args: ./configs/modchunks/net_args.yaml
+loss: multimodalattentivepooling.transform.composite.CompositeTransform
+loss_args: ./configs/modchunks/loss_args.yaml
+train_args: ./configs/modchunks/train_args.yaml

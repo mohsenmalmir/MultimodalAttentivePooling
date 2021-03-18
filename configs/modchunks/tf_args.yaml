@@ -1,0 +1,52 @@
+order: [Shift,Segment3,NormLRDist3,Segment5,NormLRDist5,Segment7,NormLRDist7]
+Shift:
+  comp: multimodalattentivepooling.transform.segment.ShiftLen
+  args:
+    len_name: vis_len
+    shift_vals: [2, 4, 6]
+    out_names: [vis_len3, vis_len5, vis_len7]
+Segment3:
+  comp: multimodalattentivepooling.transform.segment.SegmentTarget2
+  args:
+    len_name: vis_len3
+    dur_name: duration
+    ts_name: ts
+    out_name: stgt3
+NormLRDist3:
+  comp: multimodalattentivepooling.transform.distance.NormalizedLRDist
+  args:
+    len_name: vis_len3
+    dur_name: duration
+    ts_name: ts
+    lout_name: ltgt3
+    rout_name: rtgt3
+Segment5:
+  comp: multimodalattentivepooling.transform.segment.SegmentTarget2
+  args:
+    len_name: vis_len5
+    dur_name: duration
+    ts_name: ts
+    out_name: stgt5
+NormLRDist5:
+  comp: multimodalattentivepooling.transform.distance.NormalizedLRDist
+  args:
+    len_name: vis_len5
+    dur_name: duration
+    ts_name: ts
+    lout_name: ltgt5
+    rout_name: rtgt5
+Segment7:
+  comp: multimodalattentivepooling.transform.segment.SegmentTarget2
+  args:
+    len_name: vis_len7
+    dur_name: duration
+    ts_name: ts
+    out_name: stgt7
+NormLRDist7:
+  comp: multimodalattentivepooling.transform.distance.NormalizedLRDist
+  args:
+    len_name: vis_len7
+    dur_name: duration
+    ts_name: ts
+    lout_name: ltgt7
+    rout_name: rtgt7

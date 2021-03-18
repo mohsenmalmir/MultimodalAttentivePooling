@@ -13,7 +13,8 @@ class CollateTVRH5:
         vis_len = [d["vis_len"] for d in data] # T C
         query_len = [d["query_len"] for d in data] # T C
         # find max vid len, padd
-        mx_vid_len = max(max(vis_len),55)
+        # mx_vid_len = max(max(vis_len),55)
+        mx_vid_len = max(vis_len)
         vis_feats = [np.pad(d["vis_feats"],((0,mx_vid_len-l),(0,0)))[np.newaxis,...] for d,l in zip(data,vis_len)]
         vis_feats = np.concatenate(vis_feats,axis=0)
         # find max seq len, padd

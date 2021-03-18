@@ -73,12 +73,12 @@ def run(dataset, dataset_args, dataloader, dataloader_args, transforms, transfor
             # misclassification
             if epoch_index%500==0:
                 print(epoch, epoch_index,data["loss"].item())
-                idx = np.where(data["ltgt"].data.cpu().numpy()[0,:]!=-100)[0]
-                print(data["lpred"][0,idx])
-                pred = data["spred"]
+                idx = np.where(data["ltgt3"].data.cpu().numpy()[0,:]!=-100)[0]
+                print(data["lpred3"][0,idx])
+                pred = data["spred3"]
                 # print(pred.shape)
                 pred = torch.argmax(pred,dim=1).data.cpu().numpy().reshape(-1)
-                gt = data["stgt"].data.cpu().numpy().reshape(-1)
+                gt = data["stgt3"].data.cpu().numpy().reshape(-1)
                 # print(data["win33gt"].shape)
                 idx = np.where(gt != -100)
                 print(confusion_matrix(gt[idx], pred[idx]))

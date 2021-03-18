@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 class NormalizedLRDist:
     """
@@ -6,8 +7,7 @@ class NormalizedLRDist:
     The distance is normalized to [0,1]
     it is -100 outside the moment
     """
-    def __init__(self, vis_name, len_name, dur_name, ts_name, lout_name, rout_name):
-        self.vis_name = vis_name
+    def __init__(self, len_name, dur_name, ts_name, lout_name, rout_name):
         self.len_name = len_name
         self.dur_name = dur_name
         self.ts_name = ts_name
@@ -18,7 +18,7 @@ class NormalizedLRDist:
         starts, ends = zip(*data[self.ts_name])
         starts, ends = torch.tensor(starts), torch.tensor(ends)
         dur = torch.tensor(data[self.dur_name])
-        B, L, _ = data[self.vis_name].shape
+        B, L = len(data[self.len_name]), np.max(data[self.len_name])
         ltgt = torch.empty([B,L]).fill_(-100).float()
         rtgt = torch.empty([B,L]).fill_(-100).float()
         for ii,l in enumerate(data[self.len_name]):

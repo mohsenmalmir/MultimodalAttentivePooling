@@ -1,0 +1,4 @@
+nepochs: 200
+device:
+  name: cuda:0
+  data: [stgt3,ltgt3,rtgt3,stgt5,ltgt5,rtgt5,stgt7,ltgt7,rtgt7,vis_feats,query_feats]

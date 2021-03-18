@@ -1,0 +1,82 @@
+order: [SegmentLoss3,LRegLoss3,RRegLoss3,SegmentLoss5,LRegLoss5,RRegLoss5,SegmentLoss7,LRegLoss7,RRegLoss7]
+SegmentLoss3:
+  comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
+  args:
+    module:
+      comp: torch.nn.NLLLoss
+      args:
+        weight: [0.13445243, 1.]
+    out_name: spred3
+    tgt_name: stgt3
+LRegLoss3:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: lpred3
+    tgt_name: ltgt3
+    ignore_val: -100
+RRegLoss3:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: rpred3
+    tgt_name: rtgt3
+    ignore_val: -100
+SegmentLoss5:
+  comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
+  args:
+    module:
+      comp: torch.nn.NLLLoss
+      args:
+        weight: [0.13445243, 1.]
+    out_name: spred5
+    tgt_name: stgt5
+LRegLoss5:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: lpred5
+    tgt_name: ltgt5
+    ignore_val: -100
+RRegLoss5:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: rpred5
+    tgt_name: rtgt5
+    ignore_val: -100
+SegmentLoss7:
+  comp: multimodalattentivepooling.loss.torchwrapper.TorchLossWrapper
+  args:
+    module:
+      comp: torch.nn.NLLLoss
+      args:
+        weight: [0.13445243, 1.]
+    out_name: spred7
+    tgt_name: stgt7
+LRegLoss7:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: lpred7
+    tgt_name: ltgt7
+    ignore_val: -100
+RRegLoss7:
+  comp: multimodalattentivepooling.loss.distance.Dist
+  args:
+    module:
+      comp: torch.nn.MSELoss
+      args: {}
+    out_name: rpred7
+    tgt_name: rtgt7
+    ignore_val: -100

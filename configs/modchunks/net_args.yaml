@@ -1,0 +1,9 @@
+window_sizes: [3, 5, 7]
+num_chunks: [1, 1, 1]
+vis_dim: 1024
+q_dim: 768
+vis_name: vis_feats
+len_name: vis_len
+seg_names: [spred3, spred5, spred7]
+lpred_names: [lpred3, lpred5, lpred7]
+rpred_names: [rpred3, rpred5, rpred7]
