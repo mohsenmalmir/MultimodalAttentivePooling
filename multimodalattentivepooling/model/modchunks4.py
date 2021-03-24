@@ -30,10 +30,15 @@ class ModulatedChunks(Module):
         self.len_name = len_name
         self.vis_name = vis_name
         # encoders
-        self.vid_enc1 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim))
-        self.vid_enc2 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim))
-        self.seq_enc1 = torch.nn.Sequential(Linear(q_dim, q_dim),ReLU(),Linear(q_dim, vis_dim))
-        self.seq_enc2 = torch.nn.Sequential(Linear(q_dim, q_dim),ReLU(),Linear(q_dim, vis_dim))
+        self.vid_enc1 = SeqEncoder(d_model=vis_dim, d_out=vis_dim,num_layers=2)
+        self.vid_enc2 = SeqEncoder(d_model=vis_dim, d_out=vis_dim,num_layers=2)
+        self.seq_enc1 = SeqEncoder(d_model=q_dim, d_out=vis_dim,num_layers=2)
+        self.seq_enc2 = SeqEncoder(d_model=q_dim, d_out=vis_dim,num_layers=2)
+        self.mha = MultiheadAttention(vis_dim,2)
+        # self.vid_enc1 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim))
+        # self.vid_enc2 = torch.nn.Sequential(Linear(vis_dim, vis_dim),ReLU(),Linear(vis_dim, vis_dim))
+        # self.seq_enc1 = torch.nn.Sequential(Linear(q_dim, q_dim),ReLU(),Linear(q_dim, vis_dim))
+        # self.seq_enc2 = torch.nn.Sequential(Linear(q_dim, q_dim),ReLU(),Linear(q_dim, vis_dim))
         self.seg_pred = Linear(vis_dim, 2)
         self.out = LogSoftmax(dim=1)
         self.lpred = Linear(vis_dim,1)
@@ -71,8 +76,13 @@ class ModulatedChunks(Module):
         beliefs_unfolded = [b.view(b.shape[0],b.shape[1],self.num_chunks[jj],self.window_sizes[jj]//self.num_chunks[jj],b.shape[3]) for jj,b in enumerate(beliefs_unfolded)]
         chunk_labels = [torch.argmax(torch.sum(b,dim=3),dim=3) for b in beliefs_unfolded]
         sel_words = [torch.gather(enc2.unsqueeze(1).repeat(1,l.shape[1],1,1),2,l.unsqueeze(3).repeat(1,1,1,self.vis_dim)) for l in chunk_labels]
-        modulated = [sw*vu for sw,vu in zip(sel_words, vis_unfolded)]
-        modulated = [m.squeeze() for m in modulated]
+        # vis_feats = self.mha(query.transpose(0,1),vis_feats.transpose(0,1),vis_feats.transpose(0,1))[0].transpose(0,1)
+        vis_unfolded = [v.squeeze(2) for v in vis_unfolded]
+        sel_words = [s.squeeze(2) for s in sel_words]
+        modulated1 = [self.mha(sw.transpose(0,1),vu.transpose(0,1),vu.transpose(0,1))[0].transpose(0,1) for sw,vu in zip(sel_words, vis_unfolded)]
+        modulated2 = [self.mha(vu.transpose(0,1),sw.transpose(0,1),sw.transpose(0,1))[0].transpose(0,1) for sw,vu in zip(sel_words, vis_unfolded)]
+        modulated = [m1+m2 for m1, m2 in zip(modulated1, modulated2)]
+        # modulated = [m.squeeze() for m in modulated]
         # print([m.shape for m in modulated])
         segments = [self.out(self.seg_pred(m).transpose(1,2)) for m in modulated]
         # print([s.shape for s in segments])
